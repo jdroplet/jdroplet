@@ -1,0 +1,60 @@
+<#import "macropager_show" as macro/>
+<#include "header"/>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>章节列表
+                <small></small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li><a href="${siteUrls.getUrl("book.list", 1)}">所有作品</a></li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">${book.title}</h3>
+                    <div class="box-tools pull-right">
+                        <a class="btn  btn-info btn-xs" href="${siteUrls.getUrl("book.edit", book.id)}">编辑</a>
+                        <a class="btn  btn-info btn-xs" href="${siteUrls.getUrl("chapter.injection", book.id)}">导入章节</a>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="tb_pages" class="table table-bordered table-striped">
+                        <tr>
+                            <th>标题</th><th>字数</th>
+                            <th>状态</th><th>类型</th>
+                            <th>收费？</th><th>提交时间</th> <th>更新时间</th><th>审核时间</th><th>发布时间</th>
+                            <th>操作</th>
+                        </tr>
+                        <#list chapters as chapter>
+                            <tr>
+                                <td>${chapter.order+1} ${chapter.title}</td>
+                                <td>${chapter.words}</td>
+                                <td><#switch chapter.status><#case 5>上线<#break><#case 9>待审<#break><#case 2>审核不过<#break></#switch></td>
+                                <td><#switch chapter.type><#case 1>卷<#break><#case 2>章<#break></#switch></td>
+                                <td>${chapter.charge?string("是","否")}</td><td>${chapter.createTime?datetime}</td>
+                                <td>${chapter.updateTime?datetime}</td><td>${chapter.approvedTime?datetime}</td>
+                                <td>${chapter.publishTime?datetime}</td>
+                                <td><a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("chapter.edit", chapter.id)}">编辑</a></td>
+                            </tr>
+                        </#list>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <@macro.pager pageIndex, pageCount, Formater(siteUrls.getUrl("chapter.list"), book.id)?replace("{1}","{0}") />
+                </div>
+            </div>
+            <!-- /.box -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <#include "footer"/>

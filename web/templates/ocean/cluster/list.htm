@@ -1,0 +1,49 @@
+  <#include "header"/>
+  <#assign pageIndex = request.getIntParameter("pageIndex")>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>集群列表<small><a class="btn btn-block btn-info btn-xs" href="#">添加新集群</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tbpages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>集群名称</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign dataset = SiteManager.getClusters(pageIndex, pageSize)>
+            <#assign clusters = dataset.objects>
+            <#list clusters as cluster>
+            <tr>
+              <td>${cluster.name}</td>
+              <td>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("cluster.edit", cluster.id)}">编辑</a>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("site.list", cluster.id,1)}">站点</a>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("page.list", cluster.id,1)}">页面</a>
+                <a class="btn btn-block btn-danger btn-xs" data-href="${siteUrls.getUrl("cluster.delete", cluster.id)}">删除</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

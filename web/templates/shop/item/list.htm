@@ -1,0 +1,74 @@
+<#include "header"/>
+<#include "header_normal"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/category.css"/>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+  <div class="module cut">
+    <!-- 左侧开始 -->
+    <div class="w210 fl cut">
+      <div class="sli mb10">
+        <h2>热门推荐</h2>
+        <#list hots as goods>
+        <dl>
+          <dt class="fl"><a href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">
+            <img alt="${goods.name}" src="${attaPath}${goods.pics[0]}"/></a>
+          </dt>
+          <dd class="lt">
+            <a title="${goods.name}" href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">${goods.name}</a>
+            <p><i>¥</i> ${goods.salePrice}</p>
+          </dd>
+        </dl>
+        </#list>
+      </div>
+
+    </div>
+    <!-- 左侧结束 -->
+    <!-- 右侧开始 -->
+    <div class="w880">
+      <!-- 过滤筛选开始 -->
+
+      <!-- 过滤筛选结束 -->
+      <!-- 商品列表开始 -->
+      <div class="module mt10">
+        <div class="display cut">
+          <div class="seq fl cut">
+            <ul>
+              <li class="cur"><a>默认排序</a></li>
+              <li><a href="category/index.html?id=1&sort=2">价格<i class="up icon"></i></a></li>
+              <li><a href="category/index.html?id=1&sort=3">上架时间<i class="dw icon"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="spt fr cut">
+            <ul>
+              <li class="sum c999">共<b class="red">${goodses.totalRecords}</b>件商品</li>
+              <li class="flip"><font>&lt;</font><span class="c999">1 / 1</span><font>&gt;</font></li>
+            </ul>
+          </div>
+        </div>
+        <div class="gli cut">
+          <ul>
+            <#list goodses.objects as goods>
+              <li>
+                <div class="im"><a href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">
+                  <img alt="${goods.name}" src="${attaPath}${goods.pics[0]}"/></a>
+                </div>
+                <h3><a title="${goods.name}" href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">${goods.name}</a>
+                </h3>
+                <p class="price"><i>¥</i> ${(goods.salePrice/100)?string("#.##")}</p>
+              </li>
+            </#list>
+          </ul>
+        </div>
+        <!-- 页码开始 -->
+        <div class="module aln-c mt20">
+        </div>
+        <!-- 页码结束 -->
+      </div>
+      <!-- 商品列表结束 -->
+    </div>
+    <!-- 右侧结束 -->
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

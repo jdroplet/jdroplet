@@ -1,0 +1,156 @@
+<#include "header"/>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>奖品设置:${lot.name!""}<small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="${siteUrls.getUrl("activity.list", 1)}?shopId=${shop.id}"> <#if shop??>${shop.name}</#if> 的活动列表</a></li>
+        <li><a href="${siteUrls.getUrl("lottery.list", act.id)}"> <#if shop??>${act.name}</#if> 的奖品列表</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          ${ShowNotices()}
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <#if lot.id!0 == 0>
+              <h3 class="box-title">添加新奖品 最多可以添加 ${act.getInt("item_size", 5)} 个, 现在添加第 ${lots?size+1} 个</h3>
+              <#else>
+              <h3 class="box-title">编辑奖品：${lot.name!""}</h3>
+              </#if>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form" action="${siteUrls.getUrl("lottery.recv", lot.id!0)}" method="post">
+              <div class="box-body">
+                <div class="form-group form-inline">
+                  <div class="form-group">
+                    <label for="lottery_item_type1">是否需要填写获奖地址</label>
+                    <select class="form-control" id="lottery_item_type1" name="item_type1">
+                      <option value="4" ${Selected("4", And(4, lot.type!0))}>否</option>
+                      <option value="8" ${Selected("8", And(8, lot.type!0))}>是</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="lottery_item_type2">是否允许多次中奖</label>
+                    <select class="form-control" id="lottery_item_type2" name="item_type2">
+                      <option value="16" ${Selected("16", And(16, lot.type!0))}>否</option>
+                      <option value="32" ${Selected("32", And(32, lot.type!0))}>是</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="lottery_item_type3">是否显示在中奖名单列表里面</label>
+                    <select class="form-control" id="lottery_item_type3" name="item_type3">
+                      <option value="64" ${Selected("64", And(64, lot.type!0))}>是</option>
+                      <option value="128" ${Selected("128", And(128, lot.type!0))}>否</option>
+                    </select>
+                  </div>
+                     
+                </div>
+               
+                <div class="form-group">
+                  <label for="lottery_name">奖品名称</label>
+                  <input type="text" class="form-control" id="lottery_name" name="name" placeholder="请输入奖品名称" value="${lot.name!""}">
+                </div>
+
+                <#if act.type == "collection">
+                <div class="form-group">
+                  <label for="lottery_message">集福终极大奖</label>
+                  <div class="switch" data-on="danger" data-off="primary">
+                    <input type="checkbox" id="lottery_is_mix" name="is_mix_lot" ${Checked(lot.id, act.getInt("mix_lot", 0))} value="true"/>
+                  </div>
+                </div>
+                </#if>
+
+                <div class="form-group">
+                  <label for="lottery_count">数量</label>
+                  <input type="text" class="form-control" id="lottery_count" name="count" placeholder="请输入奖品数量" value="${lot.count!0}">
+                </div>
+
+                <div class="form-group">
+                  <label for="lottery_rate">中奖率</label>
+                  <select class="form-control" id="lottery_rate" name="rate">
+                    <option value="1" ${Selected("1", lot.rate!0)}>极难中</option>
+                    <option value="10" ${Selected("10", lot.rate!0)}>难中</option>
+                    <option value="100" ${Selected("100", lot.rate!0)}>较难中</option>
+                    <option value="1000" ${Selected("1000", lot.rate!0)}>容易中</option>
+                    <option value="10000" ${Selected("10000", lot.rate!0)}>很容易中</option>
+                    <option value="100000" ${Selected("100000", lot.rate!0)}>非常容易中</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="lottery_rate">限制尾号为?的用户才能中</label>
+                  <input type="text" class="form-control" id="lottery_sub_id" name="sub_id" placeholder="请输入数字" value="${lot.getInt("sub_id", 0)}">
+                </div>
+
+                <div class="form-group">
+                    <label for="lottery_icon">图标</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control set-img" id="lottery_icon" name="icon" placeholder="" value="${lot.icon!''}">
+                        <span class="input-group-btn">
+                          <button type="button" class="btn btn-info btn-flat" data-toggle="modal" id="btn_show_media_lib" data-target="#modal_media_lib">图库</button>
+                        </span>
+                    </div>
+
+                    <div class="input-group">
+                        <img class="img-thumbnail set-img" id="lottery_img" src="${lot.icon!''}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="lottery_point" id="lottery_point_name">积分</label>
+                  <input type="number" class="form-control" id="lottery_point" name="point" placeholder="请输入中奖后获得的积分" value="${lot.point!0}">
+                </div>
+             
+                <div class="form-group">
+                  <label for="lottery_message">获奖后的提示</label>
+                  <textarea class="form-control" id="lottery_message" name="message" placeholder="请输入获奖后的提示信息" value="${(lot.message!"")?html}"></textarea>
+                </div>
+              </div>
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary">提交</button>
+              </div>
+              <input type="hidden" name="rank" value="${lot.rank!0}"/>
+              <input type="hidden" name="activity_id" value="${lot.activityId!act.id}"/>
+              <input type="hidden" name="shop_id" value="${lot.shopId!shop.id}"/>
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <script>
+      <#if lot.id == act.getInt("mix_lot", 0)>
+      $("#lottery_count, #lottery_rate, #lottery_sub_id").parent().hide(1000);
+      </#if>
+      $(function () {
+          $('#lottery_is_mix').on('switch-change', function (e, state) {
+              if (state == true) {
+                  $("#lottery_count, #lottery_rate, #lottery_sub_id, #lottery_item_type1, #lottery_item_type2, #lottery_item_type3").parent().hide(1000);
+              } else {
+                  $("#lottery_count, #lottery_rate, #lottery_sub_id, #lottery_item_type1, #lottery_item_type2, #lottery_item_type3").parent().show(1000);
+              }
+          })
+      });
+
+  </script>
+  <#include "footer"/>

@@ -1,0 +1,115 @@
+<#include "header"/>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/search.css">
+  <script type="text/javascript" src="${themeUri}/dist/js/search.js"></script>
+  <script type="text/javascript">
+      var searchApi = "api/goods/search";
+  </script>
+<div class="searcher module hide" id="searcher">
+  <div class="main">
+    <a class="close pointer" href="#home" onclick="outSearch()"><i class="iconfont">&#xe62d;</i></a>
+    <div class="scin cut">
+      <a class="fr" onclick="searchGoods()"><i class="iconfont">&#xe600;</i></a>
+      <div class="in cut"><input id="kwenter" name="kw" type="text" class="variseclear" value="" required="required" /><i class="vinclrbtn iconfont">&#xe62d;</i></div>
+    </div>
+  </div>
+  <dl class="hot">
+    <dt>热搜：</dt>
+    <dd>
+      <a href="?term=iPhone">iPhone</a>
+      <a href="?term=Nova">Nova</a>
+      <a href="?term=Surface">Surface</a>
+    </dd>
+  </dl>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#kwfake').focus(function(){$('#wrapper').hide();$('#searcher').show();$(this).blur();$('#kwenter').focus();});
+        showHistory();
+    });
+
+    function searchGoods(){
+        var words = $('#kwenter').val(), target = "?kw=$words";
+        if(words != ''){
+            var history = getJsonStorage('SEARCH_HISTORY');
+            if(history == null) history = [];
+            if($.inArray(words, history) < 0){
+                if(history.unshift(words) > 10) history.pop();
+            }
+            setJsonStorage('SEARCH_HISTORY', history);
+        }
+        window.location.href = target.replace('$words', words);
+    }
+
+    function showHistory(){
+        var history = getJsonStorage('SEARCH_HISTORY');
+        if(history != null){
+            $('#searcher').append(juicer($('#history-tpl').html(), {list:history}));
+        }
+    }
+
+    function clearHistory(){
+        $.vdsConfirm({
+            content: '您确定要全部清空吗?',
+            ok: function(){
+                localStorage.removeItem('SEARCH_HISTORY');
+                $('#history').remove();
+            }
+        });
+    }
+</script>
+<script type="text/template" id="history-tpl">
+  <dl class="history" id="history">
+    <dt>历史：</dt>
+    <dd>
+      {@each list as v}
+      <a href="m/search/index.html?kw=${v}">${v}</a>
+      {@/each}
+      <a class="clear" onclick="clearHistory()">清除历史记录</a>
+    </dd>
+  </dl>
+</script><div class="wrapper" id="wrapper">
+  <div class="searcher">
+    <div class="main">
+      <a class="back pointer" href="javascript:history.back(-1)"><i class="iconfont">&#xe638;</i></a>
+      <a class="latsw pointer" id="latsw"><i class="f18 iconfont">&#xe637;</i></a>
+      <div class="scfake in cut"><input id="kwfake" type="text" value="" /></div>
+    </div>
+  </div>
+  <div class="absmu latent hide" id="top-menus">
+    <a href="/"><i class="iconfont">&#xe606;</i><span>首页</span></a>
+    <a href="${siteUrls.getUrl("item.list", shopId, 1)}"><i class="iconfont">&#xe60b;</i><span>商品分类</span></a>
+    <a href="${siteUrls.getUrl("cart.show", shopId)}"><i class="iconfont">&#xe603;</i><span>购物车</span></a>
+    <a href="${siteUrls.getUrl("user.my", shopId)}"><i class="iconfont">&#xe632;</i><span>我的</span></a>
+  </div>
+  <div class="module">
+    <div class="srli" id="srli" data-cur='1' data-next='2'>
+      <#list goodses as goods>
+      <div class="item">
+        <a class="gim" href="${siteUrls.getUrl("item.show", shop.id, goods.id)}"><img alt="${goods.name}" src="upload/goods/prime/100x100/156e2d4fa488d0.jpg" /></a>
+        <div class="gin">
+          <a class="gn" href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">${goods.name}</a>
+          <div class="st mt5 mustrcut">${goods.excerpt}！</div>
+          <p class="pri mt5"><i class="cny">¥</i><font class="f14">${(goods.salePrice/100)?string("#.##")}</font></p>
+        </div>
+      </div>
+      </#list>
+    </div>
+    <div class="nomore hide" id="nomore">—— 没有更多内容了 ——</div>
+  </div>
+</div>
+<script type="text/template" id="goods-tpl">
+  {@each list as v}
+  <div class="item">
+    <a class="gim" href="m/goods/index.html?id=${v.goods_id}"><img src="upload/goods/prime/100x100/${v.goods_image}" /></a>
+    <div class="gin">
+      <a class="gn" href="m/goods/index.html?id=${v.goods_id}">${v.goods_name}</a>
+      <p class="st mt5 mustrcut">$${v.goods_brief}</p>
+      <p class="pri mt5"><i class="cny">¥</i><font class="f14">${v.now_price}</font></p>
+    </div>
+  </div>
+  {@/each}
+</script>
+<script type="text/javascript" src="public/script/juicer.js"></script>
+<script type="text/javascript" src="public/script/stats.js"></script>
+</body>
+</html>

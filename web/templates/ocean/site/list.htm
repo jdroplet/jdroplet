@@ -1,0 +1,51 @@
+  <#include "header"/>
+  <#assign id = request.getIntParameter("id")>
+  <#assign pageIndex = request.getIntParameter("pageIndex")>
+  <#assign cluster = SiteManager.getCluster(id)>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>${cluster.name} 站点列表<small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("site.edit", cluster.id, 0)}">添加新站点</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tbpages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>地址</th>
+              <th>描述</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign dataset = SiteManager.getSites(id, 1, pageSize)>
+            <#assign sites = dataset.objects>
+
+            <#list sites as site>
+            <tr>
+              <td>${site.appRoot}</td>
+              <td>${site.description}</td>
+              <td>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("site.edit", cluster.id, site.id)}">编辑</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

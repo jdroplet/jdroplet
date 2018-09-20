@@ -1,0 +1,61 @@
+<#include "header" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/login.css" />
+  <script type="text/javascript">
+      function login(){
+          $('#username').vdsFieldChecker({rules: {required:[true, '请输入用户名']}});
+          $('#password').vdsFieldChecker({rules: {required:[true, '请输入密码']}});
+          if($('#arise-captcha')){
+              $('#captcha input.field').vdsFieldChecker({rules: {required:[true, '请输入验证码']}});
+          }
+          if($('#login-form').vdsFormChecker({isSubmit:false}) == true){
+              $.asynInter("${siteUrls.getUrl("login.recv", shopId)}", {username: $('#username').val(), password:$('#password').val(), captcha:$('#captcha input.field').val(), stay:$(stay).val()}, function(res){
+                  if(res.status == 0){
+                      window.location.href = "${siteUrls.get("user.index")}";
+                  }else{
+                      if(res.captcha){
+                          $.vdsPrompt({content:res.msg, clicked:function(){window.location.reload()}});
+                      }else{
+                          $.vdsPrompt({content:res.msg});
+                      }
+                  }
+              });
+          }
+      }
+  </script>
+  <div class="wrapper">
+    <!-- header start -->
+    <div class="header">
+      <div class="op lt"><a href="/index.php?m=mobile&c=main&a=index"><i class="f20 iconfont">&#xe602;</i></a></div>
+      <h2>用户登录</h2>
+    </div>
+    <!-- header end -->
+    <form id="login-form">
+      <input type="password" value="" class="hide" />
+      <div class="login eform">
+        <div class="user tr"><span class="icopos"><i class="iconfont">&#xe60c;</i></span><input class="field variseclear" type="text" name="username" id="username" placeholder="请输入用户名" required /><i class="vinclrbtn iconfont">&#xe62d;</i></div>
+        <div class="pwd tr"><span class="icopos"><i class="iconfont">&#xe607;</i></span><input class="field variseclear" type="password" name="password" id="password" placeholder="请输入密码" required /><i class="vinclrbtn iconfont">&#xe62d;</i><i class="vineyebtn iconfont">&#xe66e;</i></div>
+        <div class="captcha tr puff mt8" id="captcha">
+          <a class="fr"><img onclick="resetCaptcha(this)" src="/index.php?m=api&c=captcha&a=image" /></a>
+          <span class="icopos"><i class="iconfont">&#xe601;</i></span><input class="field" type="text" placeholder="请输入图形验证码" />
+        </div>
+        <div class="slck mt8 cut">
+          <div class="fl c888 f14">一月内保持登录</div>
+          <div class="fr"><input class="vswitch-1" name="stay" id="stay" type="checkbox" checked="checked" value="1" /><label for="stay"></label></div>
+        </div>
+        <div class="submit mt20"><a href="javascript:void(0)" onClick="login()">登 录</a></div>
+        <div class="bypass mt15 c999 cut">
+          <div class="fl">您还没有账号？<a href="/index.php?m=mobile&c=user&a=register">立即注册</a></div>
+          <div class="fr"><a href="/index.php?m=mobile&c=retrieve&a=password">忘记密码？</a></div>
+        </div>
+        <div class="oauthli center mt30">
+          <h3 class="c777">使用其他方式登录</h3>
+          <div class="mt10">
+            <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&amp;client_id=&amp;redirect_uri=http%3A%2F%2Fwww.haimaoshitang.com%3A8090%2Fapi%2Foauth%2Fcallback%2Fqq&amp;state=b1ff1f7ec3b872f934d044972f975db4&amp;scope=get_user_info&amp;display=mobile"><img alt="腾讯QQ" src="http://www.haimaoshitang.com:8090/plugin/oauth/icon/qq.png" /></a>
+            <a href="https://api.weibo.com/oauth2/authorize?client_id=&amp;client_secret=&amp;redirect_uri=http%3A%2F%2Fwww.haimaoshitang.com%3A8090%2Fapi%2Foauth%2Fcallback%2Fweibo&amp;response_type=code&amp;state=b1ff1f7ec3b872f934d044972f975db4&amp;display=mobile"><img alt="新浪微博" src="http://www.haimaoshitang.com:8090/plugin/oauth/icon/weibo.png" /></a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

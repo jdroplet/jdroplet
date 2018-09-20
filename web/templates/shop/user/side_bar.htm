@@ -1,0 +1,14 @@
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/user.css" />
+<div class="w180 fl cut">
+    <!-- 用户菜单开始 -->
+    <div class="menu">
+        <h2>用户菜单</h2>
+        <ul id="usermenu">
+            <li class="${(action == "my")?string("cur", "")}"><a href="${siteUrls.getUrl("user.my", shopId)}">用户中心</a></li>
+            <li class="${(action == "profile")?string("cur", "")}"><a href="${siteUrls.getUrl("user.profile", shopId)}">个人资料</a></li>
+            <li class="${(action == "orders")?string("cur", "")}"><a href="${siteUrls.getUrl("user.orders", shopId, 1)}">我的订单</a></li>
+            <li class="${(action == "contacts")?string("cur", "")}"><a href="${siteUrls.getUrl("user.contacts", shopId)}">收件地址</a></li>
+        </ul>
+    </div>
+    <!-- 用户菜单结束 -->
+</div>

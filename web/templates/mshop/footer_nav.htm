@@ -1,0 +1,6 @@
+<div class="footnav absmu" id="footnav">
+  <a class="${(tab=="home")?string("cur", "")}" href="/"><i class="iconfont">&#xe606;</i><span>首页</span></a>
+  <a class="${(tab=="items")?string("cur", "")}" href="${siteUrls.getUrl("item.list", shopId, 1)}"><i class="iconfont">&#xe60b;</i><span>商品分类</span></a>
+  <a class="${(tab=="cart")?string("cur", "")}" id="cartbar" href="${siteUrls.getUrl("cart.show", shopId)}"><i class="iconfont">&#xe603;</i><span>购物车</span><em class="hide">0</em></a>
+  <a class="${(tab=="user")?string("cur", "")}" href="${siteUrls.getUrl("user.my", shopId)}"><i class="iconfont">&#xe632;</i><span>我的</span></a>
+</div>

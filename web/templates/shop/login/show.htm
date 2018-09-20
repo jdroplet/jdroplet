@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="verydows-baseurl" content="http://www.haimaoshitang.com:8090">
+  <meta name="keywords" content="用户登录" />
+  <meta name="description" content="用户登录" />
+  <title>用户登陆 - Verydows 开源电商系统</title>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/general.css" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/login.css" />
+  <script type="text/javascript" src="${themeUri}/dist/js/jquery.js"></script>
+  <script type="text/javascript" src="${themeUri}/dist/js/general.js"></script>
+  <script type="text/javascript">
+      function login(btn){
+        var login = $('#login-form');
+        var username = login.find('input[name="username"]'), password = login.find('input[name="password"]'), captcha = login.find('dl.captcha');
+        username.vdsFieldChecker({rules:{required:[true, '请输入用户名']}, tipsPos:'fixed'});
+        password.vdsFieldChecker({rules:{required:[true, '请输入密码']}, tipsPos:'fixed'});
+        if(!captcha.is(':hidden')){
+            captcha.find('input[name="captcha"]').vdsFieldChecker({rules: {required:[true, '请输入验证码']}, tipsPos:'fixed'});
+        }
+        var formChecker = login.vdsFormChecker({
+            isSubmit: false,
+            beforeSubmit: function(){
+                $(btn).addClass('disabled').text('正在登陆').prop('disabled', true);
+            }
+        });
+
+        if(formChecker){
+            $.ajax({
+              type: 'post',
+              dataType: 'json',
+              url: "${siteUrls.getUrl("login.recv", shopId)}",
+              beforeSend: function(){$(btn).addClass('disabled').text('正在登陆...').prop('disabled', true)},
+              data: {username:username.val(), password:password.val(), captcha:captcha.find('input[name="captcha"]').val(), stay:login.find('input[name="stay"]').val()},
+              success: function(res){
+                if(res.status == 0){
+                    window.location = "${siteUrls.get("user.index")}";
+                }else{
+                  login.find('p.red').text(res.msg).show().fadeOut(2500, function(){
+                    $(btn).removeClass('disabled').text('登 陆').prop('disabled', false);
+                    resetCaptcha();
+                  });
+                  if(res.captcha == 'enabled' && captcha.is(':hidden')){
+                    login.find('.captcha').show();
+                    login.css({height:'auto', top:login.position().top - (captcha.outerHeight(true) + login.find('div.captcha').outerHeight(true))});
+                  }
+                }
+              }
+          });
+        }
+      }
+
+      function resetCaptcha(){
+          var src = "/index.php?m=api&c=captcha&a=image&v=random";
+          $('#captcha-img').attr('src', src.replace('random', Math.random()));
+          $('#captcha').focus();
+      }
+  </script>
+</head>
+<body>
+<!-- 头部开始 -->
+<div class="header">
+  <div class="w900 mt30 cut">
+    <div class="logo"><a href="/"><img src="${themeUri}/dist/images/logo.png" /></a></div>
+  </div>
+</div>
+<!-- 头部结束 -->
+<!-- 主体开始 -->
+<div class="container w900 mt20">
+  <div class="wbox cut">
+    <div class="login-banner fl cut"></div>
+    <form id="login-form">
+      <div class="login ml530">
+        <h2 class="c666">用户登录</h2>
+        <p class="f14 red aln-c hide"></p>
+        <dl class="username mt20">
+          <dt><i class="icon"></i></dt>
+          <dd><input name="username" id="username" type="text" placeholder="请输入用户名" /></dd>
+        </dl>
+        <dl class="pwd mt20">
+          <dt><i class="icon"></i></dt>
+          <dd><input name="password" id="password" type="password" placeholder="请输入密码" /></dd>
+        </dl>
+        <dl class="captcha mt20">
+          <dt><i class="icon"></i></dt>
+          <dd><input name="captcha" id="captcha" type="text" placeholder="请输入验证码" /></dd>
+        </dl>
+        <div class="captcha mt15">
+          <a class="fr" onclick="resetCaptcha()"><i class="refresh icon"></i><font>点击刷新</font></a>
+          <img src="/index.php?m=api&c=captcha&a=image" id="captcha-img" />
+        </div>
+        <div class="ck module mt20 cut">
+          <div class="fl"><label><input id="stay" name="stay" type="checkbox" value="1" /><font class="ml5">一周内自动登录</font></label></div>
+          <div class="fr"><a href="/index.php?c=retrieve&a=password">忘记密码？</a></div>
+        </div>
+        <a class="form-submit aln-c radius4 mt20" href="javascript:void(0)" onclick="login(this)">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;陆</a>
+        <div class="c999 mt20">您还没有账号？ 立即<a class="ml5" href="/index.php?c=user&a=register">免费注册</a></div>
+        <div class="oauthli mt50 aln-c">
+          <p class="c888">使用其他方式登录</p>
+          <div class="line mt5 mb5"></div>
+          <div class="pad10">
+            <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&amp;client_id=&amp;redirect_uri=http%3A%2F%2Fwww.haimaoshitang.com%3A8090%2Fapi%2Foauth%2Fcallback%2Fqq&amp;state=76dad1ac399a8f24d6cc66bfa735a162&amp;scope=get_user_info"><img alt="腾讯QQ" src="http://www.haimaoshitang.com:8090/plugin/oauth/icon/qq.png" /></a>
+            <a href="https://api.weibo.com/oauth2/authorize?client_id=&amp;client_secret=&amp;redirect_uri=http%3A%2F%2Fwww.haimaoshitang.com%3A8090%2Fapi%2Foauth%2Fcallback%2Fweibo&amp;response_type=code&amp;state=76dad1ac399a8f24d6cc66bfa735a162&amp;display=default"><img alt="新浪微博" src="http://www.haimaoshitang.com:8090/plugin/oauth/icon/weibo.png" /></a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

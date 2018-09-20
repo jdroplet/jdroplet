@@ -1,0 +1,26 @@
+<div class="box box-default">
+  <div class="box-header with-border">
+    分类设置信息
+  </div>
+
+  <div class="box-body">
+    <div class="form-group">
+      <label for="title_title">标题别名</label>
+      <input type="text" class="form-control" id="title_title" name="title_title" placeholder="请输入标题别名" value="${section.getString("title_title")!"标题"}">
+    </div>
+
+    <div class="form-group">
+      <label for="price_title">价格</label>
+      <div class="row">
+        <div class="col-lg-6"><input type="text" class="form-control" id="price_title" name="price_title" placeholder="请输入价格别名" value="${section.getString("price_title")!"价格"}"></div>
+        <div class="col-lg-6"><input type="text" class="form-control" id="price_postfix" name="price_postfix" placeholder="请输入价格后缀" value="${section.getString("price_postfix")!"月"}"></div>
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label for="content_title">内容别名</label>
+      <input type="text" class="form-control" id="content_title" name="content_title" placeholder="请输入内容别名" value="${section.getString("content_title")!"内容"}">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <#assign ptt = Posts.getPostTypeTemplate(type)!{"title":"文章"}>
+  <#if shopId gt 0>
+    <#assign shop = Shops.getShop(shopId)>
+  </#if>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+      <#if parentId ??>
+        <#assign parent = Posts.getPost(parentId)>
+        <a href="${siteUrls.getUrl("post.list", pageIndex)}?parentId=${parent.parentId}&type=${parent.type}"><i class="fa fa-mail-reply"></i></a>
+        ${parent.title} ${section.name} 列表
+        <small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("post.edit", 0)}?parentId=${parentId}&type=${type}"><i class="fa fa-plus"></i> 添加子Post</a></small>
+      <#else>
+         ${ptt.title}列表
+        <#if shopId gt 0>
+        <small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("post.edit", 0)}?type=${type}&shopId=${shopId}"><i class="fa fa-plus"></i> 添加</a></small>
+        </#if>
+      </#if>
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"><#if shopId gt 0>${shop.name}</#if> 的${ptt.title}</h3>
+          <div class="box-tools pull-right">
+            <#assign shops = Shops.getShops("", loggedin_user.id, 1, 99).objects >
+            <form method="get" action="${siteUrls.getUrl("post.list", pageIndex)}">
+            <select class="form-control" name="shopId" onchange="submit()">
+              <option value="0">--选择一个店铺--</option>
+              <#list shops as shop>
+              <option value="${shop.id}" ${(shop.id == shopId)?string("selected='selected'", "")}>${shop.name}</option>
+              </#list>
+            </select>
+              <input type="hidden" name="type" value="${type}"/>
+            </form>
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>id</th>
+              <th>名称</th>
+              <th>tags</th>
+              <th>类型</th>
+              <th>创建者</th>
+              <th>创建时间</th>
+              <th>状态</th>
+              <#if showContent==true><th>内容</th></#if>
+              <th>编辑</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign posts = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list posts as post>
+            <tr>
+              <td>${post.id}</td>
+              <td><a href="${siteUrls.getUrl("post.list", pageIndex)}?shopId=${shopId}&type=${post.type}&itemId=${post.itemId}">${post.title}</a></td>
+              <td>${post.tags}</td>
+              <td><a class="badge bg-red" href="${siteUrls.getUrl("post.list", pageIndex)}?shopId=${shopId}&type=${post.type}">${post.type}</a></td>
+              <td>${Users.getUser(post.userId).displayName}</td>
+              <td>${post.postDate?datetime}</td>
+              <td>${post.status}</td>
+              <#if showContent><th>${post.content}</th></#if>
+              <td>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("post.edit", post.id)}"><i class="fa fa-edit"></i> 编辑</a>
+
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("post.list")/>
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

@@ -1,0 +1,87 @@
+<#include "header" />
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/user.css" />
+<script type="text/javascript">
+    $(function(){
+        showOrders();
+        $.vdsTouchScroll({
+            onBottom: function(){
+                var obj = $('#orders');
+                if(obj.data('cur') != obj.data('next')){
+                    showOrders();
+                }else{
+                    $('#nomore').show();
+                }
+            },
+        });
+    });
+
+    function showOrders(){
+        var container = $('#orders'), status = container.data('status'), page_id = container.data('next');
+        $.asynList("//${request.getServerName()}/mall/order/list.api", {status:status, pageIndex:page_id, pageSize:100, type:'goods'}, function(res){
+            if(res.status == '0'){
+                $('#orders').append(juicer($('#order-tpl').html(), res));
+                if(res.paging){
+                    container.data('cur', page_id);
+                    container.data('next', res.paging.next_page);
+                }
+            }else if(res.status == 'nodata'){
+                $('#orders').append($('#nodata-tpl').html());
+            }else{
+                $.vdsPrompt({content:res.msg});
+            }
+        });
+    }
+</script>
+<div class="wrapper" id="wrapper">
+  <div class="header">
+    <div class="op lt"><a href="${siteUrls.getUrl("user.my", shopId)}"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>全部订单</h2>
+  </div>
+  <div class="orderli module cut" id="orders" data-status="${status}" data-cur="1" data-next="1"></div>
+  <div class="nomore hide" id="nomore">—— 没有更多内容了 ——</div>
+</div>
+<!-- 订单模板开始 -->
+<script type="text/template" id="order-tpl">
+  {@each data.objects as v}
+  <div class="item">
+    <div class="th c666">
+      <span class="fr">{@if v.status == 0}已经取消{@else if v.status == 1}已经下单{@else if v.status == 5}等待签收{@else if v.status == 9}已完成{@/if}</span><font class="mr5">订单号:</font><b>${r"${v.orderId}"}</b>
+    </div>
+    {@each v.items as vv}
+    <div class="goods">
+      <a class="im" href="/mshop/item/show/1/${r"${vv.productId}"}.shtml"><img src="${attaPath}${r"${vv.icon}"}" /></a>
+      <div class="info">
+        <p><a href="/mshop/item/show/1/${r"${vv.productId}"}.shtml">${r"${vv.name}"}</a></p>
+        <p class="mt5">
+          <font class="c999 mr5">单价:</font><i class="cny">¥</i>${r"${vv.price/100}"}<span class="sep10"></span><font class="c999 mr5">数量:</font>${r"${vv.quantity}"}
+        </p>
+      </div>
+    </div>
+    {@/each}
+    <div class="total"><font class="mr5">总额:</font><span class="red"><i class="cny">¥</i><font class="f14">${r"${v.payAmount/100}"}</font></span><span class="ml5 c999">(含运费：<i class="cny">¥</i>${r"${v.shippingAmount}"})</span></div>
+    <div class="act">
+      <a href="/mshop/user/order/1/${r"${v.orderId}"}.shtml">查看详细</a>
+      {@if v.status == 0}
+      <a class="b1" href="">重新购买</a>
+      {@else if v.status == 1}
+      {@if v.payment_method != 2}<a class="b1" href="/mshop/pay/show/${shopId}.shtml?orderId=${r"${v.orderId}"}">立即付款</a>{@/if}
+      <a class="b2" href="">取消订单</a>
+      {@else if v.status == 5}
+      <a class="b1" href="">确认签收</a>
+      {@else if v.status == 9}
+      <a class="b1" href="">评价</a>
+      <a class="b2" href="">售后</a>
+      {@/if}
+    </div>
+  </div>
+  {@/each}
+</script>
+<script type="text/template" id="nodata-tpl">
+  <div class="nodata">
+    <div class="th"><span><i class="iconfont">&#xe619;</i></span><div class="line"></div></div>
+    <p>暂无相关订单内容</p>
+  </div>
+</script>
+<script type="text/javascript" src="${themeUri}/dist/js/juicer.js"></script>
+</body>
+</html>

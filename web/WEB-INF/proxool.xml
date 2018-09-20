@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<something-else-entirely>
+  <proxool>
+    <alias>jdroplet_read</alias>
+    <driver-url>jdbc:mysql://127.0.0.1:3306/jdroplet_shop</driver-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <statistics>1m,15m,1d</statistics>
+    <driver-properties>
+      <property name="user" value="root"/>
+      <property name="password" value=""/>
+      <property name="useUnicode" value="true"/>
+      <property name="characterEncoding" value="utf-8"/>
+      <property name="connectTimeout" value="1000"/>    
+      <property name="zeroDateTimeBehavior" value="convertToNull"/>     
+    </driver-properties>
+    <maximum-connection-count>20</maximum-connection-count>
+    <minimum-connection-count>4</minimum-connection-count>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-active-time>300000</maximum-active-time>
+    <maximum-connection-lifetime>300000</maximum-connection-lifetime>
+  </proxool>
+  <proxool>
+    <alias>jdroplet_write</alias>
+    <driver-url>jdbc:mysql://127.0.0.1:3306/jdroplet_shop</driver-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <statistics>1m,15m,1d</statistics>
+    <driver-properties>
+      <property name="user" value="root"/>
+      <property name="password" value=""/>
+      <property name="useUnicode" value="true"/>
+      <property name="characterEncoding" value="utf-8"/>
+      <property name="connectTimeout" value="1000"/>   
+      <property name="zeroDateTimeBehavior" value="convertToNull"/>     
+    </driver-properties>
+    <maximum-connection-count>20</maximum-connection-count>
+    <minimum-connection-count>4</minimum-connection-count>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-active-time>300000</maximum-active-time>
+    <maximum-connection-lifetime>300000</maximum-connection-lifetime>
+  </proxool>
+  <proxool>
+    <alias>jdroplet_read_post</alias>
+    <driver-url>jdbc:mysql://127.0.0.1:3306/jdroplet_shop</driver-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <statistics>1m,15m,1d</statistics>
+    <driver-properties>
+      <property name="user" value="root"/>
+      <property name="password" value=""/>
+      <property name="useUnicode" value="true"/>
+      <property name="characterEncoding" value="utf-8"/>
+      <property name="connectTimeout" value="1000"/>
+      <property name="zeroDateTimeBehavior" value="convertToNull"/>
+    </driver-properties>
+    <maximum-connection-count>20</maximum-connection-count>
+    <minimum-connection-count>4</minimum-connection-count>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-active-time>300000</maximum-active-time>
+    <maximum-connection-lifetime>300000</maximum-connection-lifetime>
+  </proxool>
+  <proxool>
+    <alias>jdroplet_write_post</alias>
+    <driver-url>jdbc:mysql://127.0.0.1:3306/jdroplet_shop</driver-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <statistics>1m,15m,1d</statistics>
+    <driver-properties>
+      <property name="user" value="root"/>
+      <property name="password" value=""/>
+      <property name="useUnicode" value="true"/>
+      <property name="characterEncoding" value="utf-8"/>
+      <property name="connectTimeout" value="1000"/>
+      <property name="zeroDateTimeBehavior" value="convertToNull"/>
+    </driver-properties>
+    <maximum-connection-count>20</maximum-connection-count>
+    <minimum-connection-count>4</minimum-connection-count>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-active-time>300000</maximum-active-time>
+    <maximum-connection-lifetime>300000</maximum-connection-lifetime>
+  </proxool>
+</something-else-entirely>

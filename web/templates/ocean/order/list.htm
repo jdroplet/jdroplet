@@ -1,0 +1,116 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+      <small>订单列表</small>
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">${shop.name} 订单</h3>
+
+          <div class="box-tools pull-right">
+            <#assign shops = Shops.getShops("", loggedin_user.id, 1, 99).objects >
+            <form method="get" action="${siteUrls.getUrl("order.list", pageIndex)}">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="searchTerms" value="${searchTerms}" name="searchTerms" placeholder="Search">
+                  </div>
+                  <!-- /input-group -->
+                </div>
+
+                <!-- /.col-lg-6 -->
+                <div class="col-lg-4">
+                  <div class="form-group">
+
+                    <select class="form-control" name="shopId" onchange="submit()">
+                      <option value="0">--选择一个店铺--</option>
+                      <#list shops as shop>
+                        <option value="${shop.id}" ${(shop.id == shopId)?string("selected='selected'", "")}>${shop.name}</option>
+                      </#list>
+                    </select>
+
+                  </div>
+                  <!-- /input-group -->
+                </div>
+                <!-- /.col-lg-6 -->
+
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input class="form-control" type="submit" value="过滤">
+                  </div>
+                  <!-- /input-group -->
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>订单号</th>
+              <th>商品</th>
+              <th>下单用户名</th>
+              <th>下单时间</th>
+              <th>支付时间</th>
+              <th>费用</th>
+              <th>数量</th>
+              <th>状态</th>
+              <th>邀请者</th>
+              <th>来源</th>
+              <th>新用户?</th>
+              <th>类型</th>
+              <th>备注</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign orders = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list orders as order>
+            <tr>
+              <td><a href="${siteUrls.getUrl("order.show", order.orderId)}">${order.orderId}</a></td>
+              <td>${order.productId} - ${order.itemId}</td>
+              <td><a href="${siteUrls.getUrl("order.list", 1)}?userId=${order.userId}&shopId=${order.shopId}">${order.userId}</a></td>
+              <td>${order.createTime?datetime}</td>
+              <td><#if order.payTime??>${order.payTime?datetime}<#else>--</#if></td>
+              <td>${(order.fee/100)?string("0.##")}</td>
+              <td>${order.quantity}</td>
+              <td><#switch order.status><#case 1>提交订单<#break><#case 3>提交<#break><#case 4>已支付<#break></#switch></td>
+              <td><a href="${siteUrls.getUrl("order.list", order.shopId)}?inviter=${order.inviter}">${order.inviter}</a></td>
+              <td>${order.comeFrom}</td>
+              <td>${order.newUser?string("是", "否")}</td>
+              <td><#switch order.type><#case "recharge">充值<#break><#default>消费${order.type}</#switch></td>
+              <td>${order.remarks}</td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("order.list") + "?shopId=" + shopId + "&type=" + type + "&status=" + status />
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

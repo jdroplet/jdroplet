@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>${SiteManager.getCurrentSite().description}</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="${themeUri}/dist/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="${themeUri}/dist/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="${themeUri}/dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="${themeUri}/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="${themeUri}/dist/css/skins/_all-skins.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <!-- jQuery 2.1.4 -->
+  <script src="${themeUri}/dist/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <!-- Bootstrap 3.3.5 -->
+  <script src="${themeUri}/dist/bootstrap/js/bootstrap.min.js"></script>
+  <!-- Core -->
+  <link rel="stylesheet" href="${themeUri}/dist/css/manage.css">
+  <link rel="stylesheet" href="${themeUri}/dist/plugins/simplemodal/css/osx.css">
+  <!-- bootstrap-fileinput -->
+  <link rel="stylesheet" href="${themeUri}/dist/plugins/bootstrap-fileinput/css/fileinput.min.css">
+  <!-- bootstrap-switch -->
+  <link rel="stylesheet" href="${themeUri}/dist/plugins/bootstrap-switch/bootstrap-switch.min.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="${themeUri}/dist/plugins/colorpicker/bootstrap-colorpicker.min.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+  <#assign loggedin_user = Users.getCurrentUser()>
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="${siteUrls.getUrl("manage.show")}" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini">JDroplet</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg">JDroplet Dashboard</span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success">4</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 4 messages</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="" class="img-circle" alt="${loggedin_user.displayName}">
+                      </div>
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">10</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 10 notifications</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View all</a></li>
+            </ul>
+          </li>
+          <!-- Tasks: style can be found in dropdown.less -->
+          <li class="dropdown tasks-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-flag-o"></i>
+              <span class="label label-danger">9</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 9 tasks</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Design some buttons
+                        <small class="pull-right">20%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">20% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                </ul>
+              </li>
+              <li class="footer">
+                <a href="#">View all tasks</a>
+              </li>
+            </ul>
+          </li>
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="${themeUri}/dist/images/avatar.png" class="user-image" alt="${loggedin_user.displayName}">
+              <span class="hidden-xs">${loggedin_user.displayName}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <img src="" class="img-circle" alt="${loggedin_user.displayName}">
+
+                <p>
+                  Alexander Pierce - Web Developer
+                  <small>Member since Nov. 2012</small>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                </div>
+                <div class="pull-right">
+                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- =============================================== -->
+
+  <#include "sidebar"/>
+
+  <!-- =============================================== -->
+
+  <!-- Component -->
+  <!-- Modal -->
+  <div class="modal fade" id="modal_media_lib" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">上传资源</h4>
+        </div>
+        <div class="modal-body">
+          <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#tab_uploader" aria-controls="home" role="tab" data-toggle="tab">媒体库</a></li>
+              <li role="presentation"><a href="#tab_media_lib" aria-controls="profile" role="tab" data-toggle="tab">上传文件</a></li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="tab_uploader">
+
+              </div>
+              <div role="tabpanel" class="tab-pane" id="tab_media_lib">
+                <div class="file-loading">
+                    <input id="media-file" name="media-file" type="file">
+                </div>
+                <script>
+                $(document).on('ready', function() {
+                    $("#media-file").fileinput({
+                        uploadUrl: '${siteUrls.getUrl("file.recv")}',
+                        maxFilePreviewSize: 10240,
+                        showPreview: false,
+                        uploadExtraData:{"itemId":0}
+                    }).on('fileuploaded', function(event, data, previewId, index) {
+                        var form = data.form, files = data.files, extra = data.extra,
+                                response = data.response, reader = data.reader;
+                            console.log('File uploaded triggered');
+
+                        var elm = null;
+
+                        elm = $(document).find('input.set-img');
+                        elm.val('${attaPath}' + response.data[0].path);
+
+                        elm = $(document).find('img.set-img');
+                        elm.attr("src", '${attaPath}' + response.data[0].path);
+                        $('#modal_media_lib').modal('hide');
+                    }).on('fileselectnone', function(event) {
+
+                      });;
+                });
+                </script>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      $(function () {
+          $.fn.bootstrapSwitch.defaults.onText = '是';
+          $.fn.bootstrapSwitch.defaults.offText = '否';
+          $('[type="switch"]').bootstrapSwitch({ onSwitchChange:function(e,state){
+              $(this).trigger('switch-change', state);
+          }});
+          //Colorpicker
+          $(".colorpicker").colorpicker();
+          tinymce.init({
+              selector: ".rich_text_edit",
+              forced_root_block:'',
+              theme: "modern",
+              height: 300,
+              plugins: [
+                  "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                  "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                  "save table contextmenu directionality emoticons template paste textcolor,images"
+              ],
+              language:'zh_CN',
+              toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons images",
+              style_formats: [
+                  {title: 'Bold text', inline: 'b'},
+                  {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+                  {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+                  {title: 'Example 1', inline: 'span', classes: 'example1'},
+                  {title: 'Example 2', inline: 'span', classes: 'example2'},
+                  {title: 'Table styles'},
+                  {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+              ]
+          });
+
+          $('#tb_pages .btn-danger').click(function() {
+              var opt_url = $(this).data('href');
+
+              MessageBox.show("确定要删除么？删除后无法复原", MessageBoxButtons.OK|MessageBoxButtons.Cancel, 0, function(){
+                  window.location.href = opt_url;
+              });
+              return false;
+          });
+      });
+  </script>

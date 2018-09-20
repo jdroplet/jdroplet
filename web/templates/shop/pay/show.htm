@@ -1,0 +1,33 @@
+<#include "header"/>
+<#include "header_normal"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/order.css" />
+<!-- 主体开始 -->
+<div class="container w1100 mt30">
+    <form name="pay_form" method="post" action="${siteUrls.getUrl("pay.create", 1)}?redirect=${redirect?url}" class="paybox">
+    <div class="payinfo">
+      <table>
+        <tr>
+          <th width="80">订单编号：</th>
+          <td>${order.orderId}</td>
+        </tr>
+        <tr>
+          <th>订单金额：</th>
+          <td><b class="red">￥ ${order.payAmount}</b></td>
+        </tr>
+        <tr>
+          <th>付款方式：</th>
+          <td id="payment-select">
+            <label><input name="module" type="radio" value="ali" checked> 支付宝</label>
+            <label><input name="module" type="radio" value="wechatQRCode"> 微信</label>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="paybtn mt30"><a onclick="document.pay_form.submit()" class="checkout-btn">立即付款</a></div>
+    <input type="hidden" name="orderId" id="orderId" value="${order.orderId}" />
+    <input type="hidden" name="productName" id="productName" value="${order.orderId}" />
+    </form>
+</div>
+
+<!-- 主体结束 -->
+<#include "footer"/>

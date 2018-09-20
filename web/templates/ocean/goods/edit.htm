@@ -1,0 +1,564 @@
+<#include "header"/>
+<script src="/templates/ocean/dist/js/vue/vue.min.js"></script>
+<script src="/templates/ocean/dist/element-ui/index.js"></script>
+<script src="/templates/ocean/dist/js/axios.min.js"></script>
+<script src="/templates/ocean/dist/iview/iview.js"></script>
+<script src="/templates/ocean/dist/iview/cascader-multi.js"></script>
+<script src="${themeUri}/dist/js/vue/vue-croppa.min.js"></script>
+<link rel="stylesheet" href="${themeUri}/dist/js/vue/vue-croppa.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/1.4.2/theme-default/index.css">
+<link rel="stylesheet" href="/templates/ocean/dist/iview/iview.css">
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" id="app">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>商品管理<small></small></h1>
+    <ol class="breadcrumb">
+
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="box">
+      <!-- /.box-header -->
+      <div class="box-body">
+        ${ShowNotices()}
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">发布商品</h3>
+            <div class="box-tools pull-right">
+              <a href="${siteUrls.getUrl("shop", "item.show", goods.id)}">预览链接</a>
+            </div>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form role="form" action="${siteUrls.getUrl("goods.edit", id)}" method="post">
+          <div class="box-body">
+
+            <div class="form-group">
+              <label for="goods_name">商品名称</label>
+              <input type="text" class="form-control" id="goods_name" name="name" placeholder="请输入任务名" value="${goods.name!""}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_status">状态</label>
+              <select id="status" id="goods_status" name="status" class="form-control">
+                <option value="1" ${(goods.status == 1)?string("selected", "")}>出售中</option>
+                <option value="2" ${(goods.status == 2)?string("selected", "")}>售罄</option>
+                <option value="3" ${(goods.status == 3)?string("selected", "")}>下架</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="goods_tags">商品标签</label>
+              <input type="text" class="form-control" id="goods_tags" name="tags" placeholder="请输入商品标签" value="${goods.tags!""}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_price">商品售价</label>
+              <input type="text" class="form-control" id="goods_price" name="price" placeholder="请输入商品售价" value="${(goods.price/100)?string("#.##")}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_sale_price">折扣价</label>
+              <input type="text" class="form-control" id="goods_sale_price" name="sale_price" placeholder="请输入商品折扣价" value="${(goods.salePrice/100)?string("#.##")}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_cost">成本价</label>
+              <input type="text" class="form-control" id="goods_cost" name="cost" placeholder="请输入商品成本价" value="${(goods.cost/100)?string("#.##")}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_stocks">库存</label>
+              <input type="text" class="form-control" id="goods_stocks" name="stocks" placeholder="分组" value="${goods.stocks!""}">
+            </div>
+
+            <div class="form-group ">
+              <label>图库</label>
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-xs-3 col-md-2" v-for="(pic, index) in pics">
+                    <button type="button" class="close" @click="removePic(index)">×</button>
+                    <a class="thumbnail">
+                      <img :src="'${atta_path}'+pic"/>
+                      <input type="hidden" name="pics" :value="pic">
+                    </a>
+                  </div>
+                  <div class="col-xs-3 col-md-2">
+                    <a class="info-box-icon bg-aqua" @click="showMediaLibDlg()" :disabled="this.pics.length === 5"><i class="fa fa-plus"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+
+            <div class="form-group">
+              <label for="goods_excerpt">商品规格</label>
+              <div class="checkbox">
+                <label><input type="checkbox" v-model="enableGoodsSpec">启用规格</label>
+              </div>
+              <div class="box-body">
+                <!-- specs不存在直接不渲染 -->
+                <template v-if="properties.length != 0">
+                  <div class="form-group" v-for="(spec,index) in properties" v-show="enableGoodsSpec">
+                    <div class="box-tools pull-right">
+                      <button type="button" class="btn btn-box-tool" @click="deleteProperty(index)"><i class="fa fa-times"></i></button>
+                    </div>
+
+                    <div class="form-group">
+                      <label> 规格名称{{index+1}}</label>
+                      <input type="text" class="form-control txt-goods-property" v-model.trim.lazy="spec.type" :name="'property_name' + (index+1)">
+                    </div>
+
+                    <div class="form-group">
+                      <label> 规格值</label>
+                      <div class="row">
+                        <div class="col-lg-2" v-for="(specName,index) in spec.children">
+                          <div class="form-group input-group">
+                            <input type="search" class="form-control clearable" v-model.lazy="specName" :disabled="true">
+                            <div class="input-group-addon">
+                              <a class="fa fa-close" @click="deleteGoodsSpec(index,spec.children)"></a>
+                            </div>
+                          </div>
+                          <!-- /input-group -->
+                        </div>
+                        <div class="col-lg-3">
+                          <div class="input-group">
+                            <input type="text" class="form-control" placeholder="添加规格值" v-model.trim.lazy="newSpecName[index]">
+                            <span class="input-group-btn">
+                              <button type="button" class="btn btn-info btn-flat" @click="addGoodsSpec(spec.children, newSpecName[index], index)"><i class="fa fa-plus"></i></button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                  </div>
+                </template>
+                <a class="btn btn-primary" :disabled="this.properties.length === 3" v-if="enableGoodsSpec" @click="addProperty" role="button"><i class="fa fa-plus"></i> 添加规格项</a>
+              </div>
+
+              <div class="box-footer" v-show="enableGoodsSpec">
+                <label for="goods_excerpt">规格明细</label>
+                <template v-if="enableGoodsSpec">
+                  <!-- specs不存在直接不渲染 -->
+                  <template v-if="properties.length != 0">
+                    <el-table :data="tableData" border style="width: 100%" key='aTable'>
+                      <el-table-column prop="property0" :label="properties[0].type" width="100">
+                        <input type="text" value="123">
+                      </el-table-column>
+                      <el-table-column prop="property1" :label="properties[1].type" width="100" v-if="properties.length >= 2">
+                      </el-table-column>
+                      <el-table-column prop="property2" :label="properties[2].type" width="100" v-if="properties.length >= 3">
+                      </el-table-column>
+                      <el-table-column prop="goodsSpec.price" label="售价" width="100" min-width="200">
+                        <template scope="scope">
+                          <div slot="reference" class="name-wrapper">
+                            <input type="text" class="form-control" :value="scope.row.goodsSpec.price" v-model.trim.lazy="scope.row.goodsSpec.price"/>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="goodsSpec.cost" label="成本价" width="100">
+                        <template scope="scope">
+                          <div slot="reference" class="name-wrapper">
+                            <input type="text" class="form-control" :value="scope.row.goodsSpec.cost" v-model.trim.lazy="scope.row.goodsSpec.cost"/>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="goodsSpec.sku" label="规格编码" width="100">
+                        <template scope="scope">
+                          <div slot="reference" class="name-wrapper">
+                            <input type="text" class="form-control" :value="scope.row.goodsSpec.sku" v-model.trim.lazy="scope.row.goodsSpec.sku"/>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="goodsSpec.stocks" label="库存" width="100">
+                        <template scope="scope">
+                          <div slot="reference" class="name-wrapper">
+                            <input type="text" class="form-control" :value="scope.row.goodsSpec.stocks" v-model.trim.lazy="scope.row.goodsSpec.stocks"/>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="goodsSpec.amount" label="销量" width="100">
+                        <template scope="scope">
+                          {{scope.row.goodsSpec.amount}}
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </template>
+                </template>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="goods_excerpt">类别</label>
+              <Cascader :value="selectedSections" :data="sections" :load-data="getSections" @on-change="onSectionChange"></Cascader>
+              <input :value="sec" type="hidden" name="sectionIds" v-for="(sec, index) in selectedSections">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_excerpt">商品卖点</label>
+              <input type="text" class="form-control" id="goods_excerpt" name="excerpt" placeholder="在商品详情页标题下面展示卖点信息，建议60字以内" value="${goods.excerpt!""}">
+            </div>
+
+            <div class="form-group">
+              <label for="goods_desc">详细介绍</label>
+              <textarea class="form-control rich_text_edit" id="goods_desc" name="description" placeholder="请输入引用类型">${goods.description!""}</textarea>
+            </div>
+
+          </div>
+          <div class="box-footer">
+            <button type="submit" class="btn btn-primary">提交</button>
+          </div>
+          <input type="hidden" name="shop_id" value="${shopId}">
+          <input type="hidden" name="goodsSpecs" :value="JSON.stringify(goods)">
+          </form>
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+  </section>
+  <!-- /.content -->
+  <#include "vue_comment"/>
+</div>
+<!-- /.content-wrapper -->
+<link rel="stylesheet" href="${themeUri}/dist/plugins/daterangepicker/daterangepicker-bs3.css">
+<!-- date-range-picker -->
+<script src="${themeUri}/dist/plugins/daterangepicker/moment.min.js"></script>
+<script src="${themeUri}/dist/plugins/daterangepicker/daterangepicker.js"></script>
+<script>
+    if (!Array.prototype.includes) {
+        Object.defineProperty(Array.prototype, 'includes', {
+            value: function(searchElement, fromIndex) {
+
+                // 1. Let O be ? ToObject(this value).
+                if (this == null) {
+                    throw new TypeError('"this" is null or not defined');
+                }
+
+                var o = Object(this);
+
+                // 2. Let len be ? ToLength(? Get(O, "length")).
+                var len = o.length >>> 0;
+
+                // 3. If len is 0, return false.
+                if (len === 0) {
+                    return false;
+                }
+
+                // 4. Let n be ? ToInteger(fromIndex).
+                //    (If fromIndex is undefined, this step produces the value 0.)
+                var n = fromIndex | 0;
+
+                // 5. If n ≥ 0, then
+                //  a. Let k be n.
+                // 6. Else n < 0,
+                //  a. Let k be len + n.
+                //  b. If k < 0, let k be 0.
+                var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+                // 7. Repeat, while k < len
+                while (k < len) {
+                    // a. Let elementK be the result of ? Get(O, ! ToString(k)).
+                    // b. If SameValueZero(searchElement, elementK) is true, return true.
+                    // c. Increase k by 1.
+                    // NOTE: === provides the correct "SameValueZero" comparison needed here.
+                    if (o[k] === searchElement) {
+                        return true;
+                    }
+                    k++;
+                }
+
+                // 8. Return false
+                return false;
+            }
+        });
+    }
+    Vue.use(Croppa);
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                croppa: {},
+                sliderVal: 0,
+                sliderMin: 0,
+                sliderMax: 0,
+                isShowUploadBtn:false,
+                selectedSections: ${sections},
+                sections:[],
+                enableGoodsSpec: null,
+                properties: ${properties},
+                goods: ${goodsSpecs},
+                newSpecName: ['', '', ''],
+                folder:'Goods',
+                pics:${pics},
+                isShowMediaLibDlg: false,
+                atts:[],
+                selecteImgs:0,
+                postData:{"itemId":${goods.id}}
+            }
+        },
+        methods: {
+            onMediaSelected() {
+                for(var i =0; i<this.atts.length; i++) {
+                    if (this.atts[i].selected == 1)
+                        this.pics.push(this.atts[i].diskFilename)
+                }
+                this.isShowMediaLibDlg = false;
+            },
+            showMediaLibDlg(){
+                var me = this;
+                axios.get('/api/attachment/list.shtml?shopId=1&pageIndex=1&pageSize=8').then((resp) => {
+                    if (!resp.data.status) {
+                    me.atts = resp.data.data.objects;
+                    for(var i =0; i<me.atts.length; i++) {
+                        me.atts[i].img_url = '${atta_path}' + me.atts[i].diskFilename;
+                        me.atts[i].selected = 0;
+                    }
+                }
+            });
+                this.isShowMediaLibDlg = true;
+            },
+            removePic(index) {
+                this.pics.splice(index,1);
+                this.selecteImgs = this.pics.length;
+            },
+            onImgSelected(idx) {
+                var obj = this.atts[idx];
+
+                if (obj['selected'] == 1) {
+                    obj['selected'] = 0;
+                    if (this.selecteImgs != 0)
+                        this.selecteImgs --;
+                } else {
+                    if (this.selecteImgs < 5) {
+                        obj['selected'] = 1;
+                        this.selecteImgs ++;
+                    }
+                }
+
+                Vue.set(this.atts, idx, obj);
+            },
+            onAttUploadSuccess(resp, file, files) {
+                this.atts.push(resp.data[0]);
+                this.pics.push(resp.data[0].path);
+                this.showMediaLibDlg = false;
+            },
+            deleteProperty(index) {
+                var r = confirm('确定删除规格名么?')
+                if (r) {
+                    this.properties.splice(index, 1)
+                    this.makeGoodsSpecs(this.makeProperties())
+                } else {
+                    return
+                }
+            },
+            deleteGoodsSpec(index, spec) {
+                spec.splice(index, 1)
+                this.makeGoodsSpecs(this.makeProperties())
+            },
+            addProperty() {
+                var obj = {}
+                obj.type = "";
+                obj.children = []
+                this.properties.push(obj)
+            },
+            addGoodsSpec(spec, newSpecName, index) {
+                // 检测新规格名是否规范 1, 不为空. 2,不重复
+                if (!newSpecName) {
+                    alert('规格项名称不能为空')
+                    return
+                } else if (spec.includes(newSpecName)) {
+                    alert('规格项名称不能为重复')
+                    return
+                }
+                spec.push(newSpecName)
+
+                var properties = this.makeProperties()
+                this.makeGoodsSpecs(properties)
+
+                this.newSpecName[index] = ''
+            },
+            // 规格组合数组
+            makeProperties() {
+                var arrWra = [];
+
+                var gl = [];
+                for (var i = 0; i < 3; i++) {
+                    var arr = [];
+                    var spec = this.properties[i];
+
+                    if (spec != undefined) arr = spec.children;
+                    if (arr.length == 0) arr = [''];
+
+                    gl.push(arr);
+                }
+
+                var arr = []
+                for (var t = 0; t < gl[0].length; t++) {
+                    for (var i = 0; i < gl[1].length; i++) {
+                        for (var k = 0; k < gl[2].length; k++) {
+                            arr = []
+                            arr.push(gl[0][t]);
+                            arr.push(gl[1][i]);
+                            arr.push(gl[2][k]);
+                            arrWra.push(arr);
+                        }
+                    }
+                }
+                return arrWra
+            },
+            // 规格价格数据 local
+            // 数据更新
+            makeGoodsSpecs(makeProperties) {
+                var arrWra = []
+                // 规格组合 数组
+                var arr = makeProperties
+                for (var i = 0; i < arr.length; i++) {
+                    var obj = {};
+                    obj.property0 = arr[i][0];
+                    obj.property1 = arr[i][1];
+                    obj.property2 = arr[i][2];
+
+                    obj.goodsSpec = {
+                        properties:arr[i],
+                        price: '',
+                        sku: '',
+                        cost: '',
+                        stocks: '',
+                        amount: ''
+                    };
+
+                    var oldItem = this.goods.filter((element) => {
+                        return element.goodsSpec.properties + "" === arr[i] + "";
+                });
+                    if (oldItem.length) {
+                        obj.goodsSpec = oldItem[0].goodsSpec
+                    }
+
+                    arrWra.push(obj)
+                }
+                this.goods = arrWra
+            },
+            getSections (item, callback) {
+                item.loading = true;
+                axios.get('/ebooks/section/list.api?shopId=1&pageIndex=1&type=shop_goods&pageSize=999&parentId=' + item.id).then((resp) => {
+                    console.info(item);
+                item.loading = false;
+                if (resp.data.data == null || resp.data.data.objects.length == 0) {
+                    item.children = undefined;
+                    item.loading = undefined;
+                    callback();
+                    return;
+                }
+
+                for (var i=0; i<resp.data.data.objects.length; i++) {
+                    resp.data.data.objects[i].label = resp.data.data.objects[i].name;
+                    resp.data.data.objects[i].value = resp.data.data.objects[i].id;
+                    resp.data.data.objects[i].level = item.level + 1;
+                    if (resp.data.data.objects[i].level < 3) {
+                        resp.data.data.objects[i].children = [];
+                        resp.data.data.objects[i].loading = false;
+                    }
+                }
+                if (item.level == 0) {
+                    this.sections = resp.data.data.objects;
+                } else {
+                    item.children = resp.data.data.objects;
+                }
+                callback();
+            });
+            },
+            onSectionChange(value, selectedData) {
+                this.selectedSections = selectedData.map(o => o.value);
+                console.info(this.selectedSections)
+            },
+            upload() {
+                var that = this;
+                if (!this.croppa.hasImage()) {
+                    alert('请选择图片')
+                    return
+                }
+
+                this.croppa.generateBlob((blob) => {
+                    var fd = new FormData()
+                    fd.append('file', blob, "crop.png")
+                fd.append('itemId', '0')
+                fd.append('folder', that.folder);
+                $.ajax({
+                    url: '${siteUrls.getUrl("file.recv")}',
+                    data: fd,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.status == 0) {
+                            that.curItem.icon = data.data[0].path;
+                            that.isShowMediaLibDlg = false;
+                        } else {
+
+                        }
+                    }
+                })
+            })
+            },
+            onNewImage() {
+                this.sliderVal = this.croppa.scaleRatio
+                this.sliderMin = this.croppa.scaleRatio / 2
+                this.sliderMax = this.croppa.scaleRatio * 2
+            },
+
+            onSliderChange(evt) {
+                var increment = evt.target.value
+                this.croppa.scaleRatio = +increment
+            },
+
+            onZoom() {
+                this.sliderVal = this.croppa.scaleRatio
+            }
+        },
+        computed: {
+            // 表格数据
+            tableData() {
+                return this.goods;
+            }
+        },
+        created() {
+            for (var i = 0; i < this.goods.length; i++) {
+                this.goods[i].goodsSpec.cost /= 100;
+                this.goods[i].goodsSpec.price /= 100;
+            }
+            if (this.properties.length == 0) {
+                // 初始化规格数据
+                var obj = {}
+                obj.type = "";
+                obj.children = []
+                this.properties.push(obj)
+
+                // 初始化价格数据
+                var _obj = [{}]
+                _obj[0].goodsSpec = {
+                    //_obj[0].properties = ['']
+                    properties:[''],
+                    price: 0,
+                    sku: 0,
+                    cost: 0,
+                    amount: 0
+                }
+                this.goods = _obj
+            }
+
+            this.enableGoodsSpec = false;
+            this.selecteImgs = this.pics.length;
+
+            this.getSections({"id":0, "level":0});
+        }
+    })
+</script>
+<!-- /.content-wrapper -->
+<#include "footer"/>

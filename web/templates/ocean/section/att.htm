@@ -1,0 +1,336 @@
+<#include "header"/>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>分类设置<small></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+      <li><a href="">分类列表</a></li>
+
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="box">
+      <!-- /.box-header -->
+      <div class="box-body">
+        ${ShowNotices()}
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <#if id == 0>
+              <h3 class="box-title">创建新的分类</h3>
+              <#else>
+                <h3 class="box-title">编辑 ${att.name} 分类</h3>
+            </#if>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form name="section_form" role="form" action="${siteUrls.getUrl("section.att", id)}" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="section_name">名称</label>
+              <input type="text" class="form-control" id="section_name" name="name" placeholder="请输入名称" value="${att.name!""}">
+            </div>
+
+            <div class="form-group">
+              <label for="form_type">表单类型</label>
+              <select class="form-control" id="form_type" name="form_type">
+                <#assign types = {"":"请选择","text":"单行文本","textarea":"多行文本","editor":"编辑器","select":"下拉框","radio":"单选按钮","checkbox":"复选框","img":"图片","imgs":"多图片","file":"文件上传","files":"多文件上传","number":"数字","time":"时间","map":"地图坐标","area":"地区选择框"}>
+                <#list types?keys as key>
+                <option value="${key}" ${(key == att.formType!"")?string("selected", "")}>${types[key]}</option>
+                </#list>
+              </select>
+            </div>
+
+            <div class="collapse" id="att_input_type_text">
+              <div class="form-group"><label>最小长度</label><input class="form-control" type="text" id="text_min_length"></div>
+              <div class="form-group"><label>最大长度</label><input class="form-control" type="text" id="text_max_length"></div>
+              <div class="form-group"><label>默认值</label><input class="form-control" type="text" placeholder="last则调用 用户上次输入值" id="text_default_value"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_textarea">
+              <div class="form-group"><label>宽</label><input class="form-control" type="text" id="textarea_width"></div>
+              <div class="form-group"><label>高</label><input class="form-control" type="text" id="textarea_height"></div>
+              <div class="form-group"><label>默认值</label><textarea class="form-control" placeholder="last则调用 用户上次输入值" id="textarea_default_value"></textarea></div>
+              <div class="form-group"><label>允许Html</label><select class="form-control" id="textarea_allow_html"><option value="0">否</option><option value="1">是</option></select></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_editor">
+              <div class="form-group"><label>高</label><input class="form-control" type="text" id="editor_height"></div>
+              <div class="form-group"><label>默认值</label><textarea class="form-control" placeholder="last则调用 用户上次输入值" id="editor_default_value"></textarea></div>
+              <div class="form-group"><label>开启图片水印</label><select class="form-control" id="editor_open_image_mark"><option value="0">否</option><option value="1">是</option></select></div>
+
+            </div>
+
+            <div class="collapse" id="att_input_type_select">
+              <div class="form-group"><label>选项列表</label><textarea class="form-control" id="select_option" placeholder="例:男/女"></textarea></div>
+              <div class="form-group"><label>默认值</label><input class="form-control" type="text" placeholder="last则调用 用户上次输入值" id="select_default_value"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_radio">
+              <div class="form-group"><label>选项列表<br></label><textarea class="form-control" id="radio_option" rows="4" placeholder="例:男/女"></textarea></div>
+              <div class="form-group"><label>默认值</label><input class="form-control" type="text" placeholder="last则调用 用户上次输入值" id="radio_default_value"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_checkbox">
+              <div class="form-group"><label>选项列表</label><textarea class="form-control" id="checkbox_option" placeholder="例:男/女"></textarea></div>
+              <div class="form-group"><label>默认值</label><input class="form-control" type="text" placeholder="last则调用 用户上次输入值" id="checkbox_default_value"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_img">
+              <div class="form-group"><label>允许图片类型</label><input class="form-control" type="text" value="jpg,png,gif" id="img_allow_image_type"></div>
+              <div class="form-group"><label>开启图片水印</label><select class="form-control" id="img_open_image_mark"><option value="0">否</option><option value="1">是</option></select></div>
+              <div class="form-group"><label>缩略图宽</label><input class="form-control" type="text" id="img_width"></div>
+              <div class="form-group"><label>缩略图高</label><input class="form-control" type="text" id="img_height"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_imgs">
+              <div class="form-group"><label>允许图片类型</label><input class="form-control" type="text" value="jpg,png,gif" id="imgs_allow_image_type"></div>
+              <div class="form-group"><label>开启图片水印</label><select class="form-control" id="imgs_open_image_mark"><option value="0">否</option><option value="1">是</option></select></div>
+              <div class="form-group"><label>缩略图宽</label><input class="form-control" type="text" id="imgs_width"></div>
+              <div class="form-group"><label>缩略图高</label><input class="form-control" type="text" id="imgs_height"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_file">
+              <div class="form-group"><label>允许文件类型</label><input class="form-control" type="text" value="rar,zip,doc,docx" id="file_allow_file_type"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_files">
+              <div class="form-group"><label>允许文件类型</label><input class="form-control" type="text" value="rar,zip,doc,docx" id="files_allow_file_type"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_number">
+              <div class="form-group">
+                <label>取值范围</label>
+                <div class="row">
+                  <div class="col-lg-6"><input class="form-control" type="text" value="0" id="number_min" placeholder="from"></div>
+                  <div class="col-lg-6"><input class="form-control" type="text" id="number_max" placeholder="to"></div>
+                </div>
+              </div>
+              <div class="form-group"><label>小数位数</label><select class="form-control" id="number_decimal_places"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+              <div class="form-group"><label>默认值</label><input class="form-control" type="text" placeholder="last则调用 用户上次输入值" id="number_default_value"></div>
+            </div>
+
+            <div class="collapse" id="att_input_type_time">
+              <div class="form-group"><label>时间格式</label><select class="form-control" id="time_style"><option value="Y-m-d">年月日</option><option value="Y-m-d H:i:s">年月日 时分秒</option></select></div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+              <label>属性后缀</label>
+              <input class="form-control" type="text" id="postfix" name="postfix" value="${att.postfix!""}" placeholder="选填 例：㎡、㎞、㎏、元"/>
+            </div>
+
+            <div class="form-group">
+              <label>字段提示</label>
+              <input class="form-control" type="text" id="placeholder" name="placeholder" value="${att.placeholder!""}"/>
+            </div>
+
+            <div class="form-group">
+              <label>检验正则</label>
+              <div class="row">
+                <div class="col-lg-6">
+                  <input class="form-control" type="text" id="reg" name="reg" value="${att.reg!""}"/>
+                </div>
+                <div class="col-lg-6">
+                  <select class="form-control" id="set_reg">
+                    <option value="">自定义</option>
+                    <option value="/^[0-9.-]+$/">数字</option>
+                    <option value="/^[0-9-]+$/">整数</option>
+                    <option value="/^[a-z]+$/i">字母</option>
+                    <option value="/^[0-9a-z]+$/i">字母+数字</option>
+                    <option value="/^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/">E-mail</option>
+                    <option value="/^[0-9]{5,20}$/">QQ</option>
+                    <option value="/^http:\/\//">网址链接</option>
+                    <option value="/^(1)[0-9]{10}$/">中国手机号码</option>
+                    <option value="/^[0-9-]{6,13}$/">中国电话号码</option>
+                    <option value="/^[0-9]{6}$/">中国邮政编码</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>值唯一</label>
+              <select class="form-control" id="unique" name="unique">
+                <option value="false">否</option>
+                <option value="true">是</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>必填</label>
+              <select class="form-control" id="required" name="required">
+                <option value="false">否</option>
+                <option value="true">是</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>可搜索</label>
+              <select class="form-control" id="search_able" name="search_able">
+                <option value="true">是</option>
+                <option value="false">否</option>
+              </select>
+            </div>
+
+
+          </div>
+          <div class="box-footer">
+            <button type="submit" id="submit" class="btn btn-primary">提交</button>
+          </div>
+          <input type="hidden" name="args" id="args">
+          <input type="hidden" name="section_id" value="${sectionId}">
+          </form>
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<script>
+    $(function () {
+        // init
+        var form_type = $('#form_type').val();
+        if (form_type != "") {
+            var id = 'att_input_type_' + form_type;
+            $("#" + id).collapse('show');
+        }
+
+        $("#set_reg").val('${att.reg!""}');
+        $("#unique").val('${att.unique?string("true","false")}');
+        $("#search_able").val('${att.searchAble?string("true","false")}');
+        $("#required").val('${att.required?string("true","false")}');
+
+        var args = ${att.args!"{}"};
+        if (args['options'] == null) args['options'] = [];
+
+        switch ($('#form_type').val()) {
+            case 'text':
+                $("#text_min_length").val(args['min_length']);
+                $("#text_max_length").val(args['max_length']);
+                $("#text_default_value").val('${att.defaultValue}');
+                break;
+            case 'textarea':
+                $("#textarea_allow_html").val(args['allow_html']);
+                $("#textarea_width").val(args['width']);
+                $("#textarea_height").val(args['height']);
+                break;
+            case 'editor':
+                $("#editor_height").val(args['height']);
+                $("#editor_default_value").val(args['height']);
+                $("#editor_open_image_mark").val(args['image_mark']);
+                break;
+            case 'select':
+                $("#select_option").val(JSON.stringify(args));
+                $("#select_default_value").val('${att.defaultValue}');
+                break;
+            case 'radio':
+                $("#radio_option").val(args['options'].join('/'));
+                $("#radio_default_value").val('${att.defaultValue}');
+                break;
+            case 'checkbox':
+                $("#checkbox_option").val(args['options'].join('/'));
+                $("#checkbox_default_value").val('${att.defaultValue}');
+                break;
+            case 'img':
+                $("#img_allow_image_type").val(args['allow_type']);
+                $("#img_open_image_mark").val(args['image_mark']);
+                $("#img_width").val(args['width']);
+                $("#img_height").val(args['height']);
+                break;
+            case 'imgs':
+                $("#imgs_allow_image_type").val(args['allow_type']);
+                $("#imgs_open_image_mark").val(args['image_mark']);
+                $("#imgs_width").val(args['width']);
+                $("#imgs_height").val(args['width']);
+                break;
+            case 'file':
+                $("#file_allow_file_type").val(args['allow_type']);
+                break;
+            case 'files':
+                $("#files_allow_file_type").val(args['allow_type']);
+                break;
+            case 'number':
+                $("#number_min").val(args['min']);
+                $("#number_max").val(args['max']);
+                $("#number_decimal_places").val(args['decimal_places']);
+                $("#number_default_value").val('${att.defaultValue}');
+                break;
+            case 'time':
+                $("#time_style").val(args['style']);
+                break;
+            case 'map':
+                break;
+            case 'area':
+                break;
+        }
+
+        // event
+        $("#form_type").change(function () {
+            var id = 'att_input_type_' + $(this).val();
+            $(".collapse").collapse('hide');
+            $("#" + id).collapse('show');
+        });
+
+        $("#set_reg").change(function () {
+            $("#reg").val($(this).val());
+        });
+
+        $("#submit").click(function () {
+            var args = '';
+            var v = $("#form_type").val();
+            switch (v) {
+                case 'text':
+                    args = {'min_length':$("#text_min_length").val(), 'max_length':$("#text_max_length").val()};
+                    break;
+                case 'textarea':
+                    args = {'width':$("#textarea_width").val(), 'height':$("#textarea_height").val(), 'allow_html':$("#textarea_allow_html").val()};
+                    break;
+                case 'editor':
+                    args = {'height':$("#editor_height").val(), 'img_mark':$("#editor_open_image_mark").val()};
+                    break;
+                case 'select':
+                    args = JSON.parse($("#select_option").val());
+                    break;
+                case 'radio':
+                    args = {'options':$("#radio_option").val().split("/")};
+                    break;
+                case 'checkbox':
+                    args = {'options':$("#checkbox_option").val().split('/')};
+                    break;
+                case 'img':
+                case 'imgs':
+                    args = {'allow_type':$("#img_allow_image_type").val(), 'image_mark':$("#img_open_image_mark").val(), 'width':$("#img_height").val(), 'height':$("#img_height").val()};
+                    break;
+                case 'file':
+                case 'files':
+                    args += '|file_allow_file_type:' + $("#file_allow_file_type").val();
+                    args = {'allow_type':$("#file_allow_file_type").val()};
+                    break;
+                case 'number':
+                    args = {'min':$("#number_min").val(), 'max':$("#number_max").val(), 'decimal_places':$("#number_decimal_places").val()};
+                    break;
+                case 'time':
+                    args = {'style':$("#time_style").val()};
+                    break;
+                case 'map':
+                    break;
+                case 'area':
+                    break;
+            }
+            $("#args").val(JSON.stringify(args));
+            return true;
+        });
+    })
+</script>
+<#include "footer"/>

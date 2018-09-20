@@ -1,0 +1,140 @@
+<#include "header"/>
+<#include "header_normal"/>
+<script src="${themeUri}/dist/js/distpicker.min.js"></script>
+<script type="text/javascript" src="${themeUri}/dist/js/consignee.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var cBox = $('#consignee-box');
+        getAreaSelect();
+        $('#newadrbtn').on('click', function(){
+            $(this).hide();
+            $('#distpicker').distpicker({
+                province: '---- 所在省 ----',
+                city: '---- 所在市 ----',
+                district: '---- 所在区 ----'
+            });
+            cBox.slideDown().find('span.vdsfielderr').remove();
+            cBox.find('form input[name="id"]').val('');
+        });
+        cBox.find('.submit-btn button').eq(0).click(function(){
+            if(checkConsigneeForm('consignee-form') == true){
+                $('#consignee-form').submit();
+            }
+        });
+        cBox.find('.submit-btn button').eq(1).click(function(){
+            cBox.slideUp('normal', function(){$('#newadrbtn').show()}).find('form')[0].reset();
+        });
+    });
+
+    function editConsignee(container, btn){
+        var form = $('#consignee-form'), elm = $(btn);
+        $('#newadrbtn').hide();
+        form.parent().slideUp();
+        form.parent().slideDown().find('span.vdsfielderr').remove();
+        form.find('input[name="id"]').val(elm.data("id"));
+        form.find('input[name="user_name"]').val(elm.data("username"));
+        form.find('input[name="address"]').val(elm.data("address"));
+        form.find('input[name="code"]').val(elm.data("code"));
+        form.find('input[name="phone"]').val(elm.data("phone"));
+
+        var area = elm.data("area").split(" ");
+        $('#distpicker').distpicker({
+            province: area[0],
+            city: area[1],
+            district: area[2]
+        });
+    }
+</script>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+	<div class="module cut">
+		<!-- 左侧开始 -->
+		<#include "user/side_bar"/>
+		<!-- 左侧结束 -->
+		<!-- 右侧开始 -->
+		<div class="w910">
+			<div class="consignee mcter">
+				<h2>收件地址管理</h2>
+				<div class="consignee-form">
+					<div><button type="button" class="sm-blue" id="newadrbtn">+ 新建收件人信息</button></div>
+					<div class="module mt10 hide cut" id="consignee-box">
+						<form method="post" id="consignee-form" action="${siteUrls.getUrl("user.contacts", shopId)}">
+							<input type="hidden" name="id" value="" />
+							<div class="mcter cut">
+								<dl>
+									<dt><label for="userName">收件人：</label></dt>
+									<dd><input name="user_name" id="userName" type="text" class="w200 txt" value="" /></dd>
+								</dl>
+								<dl>
+									<dt>所在地区：</dt>
+									<dd id="area-select">
+										<div id="distpicker">
+											<select name="area" class="slt"></select>
+											<select name="area" class="slt"></select>
+											<select name="area" class="slt"></select>
+										</div>
+									</dd>
+								</dl>
+								<dl>
+									<dt><label for="address">详细地址：</label></dt>
+									<dd><input name="address" id="address" type="text" class="w400 txt" value="" /></dd>
+								</dl>
+								<dl>
+									<dt><label for="code">邮编：</label></dt>
+									<dd><input name="code" id="code" type="text" class="w100 txt" value="" /></dd>
+								</dl>
+								<dl>
+									<dt><label for="phone">手机号码：</label></dt>
+									<dd><input name="phone" id="phone" type="text" class="w200 txt" value="" /></dd>
+								</dl>
+								<div class="submit-btn mt10"><button type="button" class="sm-green">保存信息</button><span class="ml10 mr10"></span><button type="button" class="sm-gray">取消</button></div>
+							</div>
+							<input type="hidden" name="id" value="0">
+							<input type="hidden" name="shop_id" value="${shopId}">
+						</form>
+					</div>
+				</div>
+				<div class="list mt5 cut">
+					<p class="c888 ml5">您已保存了<b class="ml5 mr5 red">${contacts?size}</b>条收件人地址，还能保存<b class="ml5 mr5 red">${5 - contacts?size}</b>条收件人地址</p>
+					<div class="module mt10">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<th width="130">收件人</th>
+								<th>收件地址</th>
+								<th width="120"><p class="aln-c">联系电话</p></th>
+								<th width="110"><p class="aln-c">邮编</p></th>
+								<th width="150"><p class="aln-c">操作</p></th>
+							</tr>
+							<#list contacts as ct>
+							<tr>
+								<td>${ct.userName}</td>
+								<td>
+									<p>${ct.area}</p>
+									<p class="mt5">${ct.address}</p>
+								</td>
+								<td><p class="aln-c">${ct.phone}</p></td>
+								<td><p class="aln-c">${ct.code}</p></td>
+								<td>
+									<div class="aln-c">
+										<#if ct.isDefault()>
+											<font class="caaa ml5 mr5 red">默认地址</font>
+										<#else>
+											<a href="/index.php?c=consignee&a=defaulted&id=2">设为默认</a>
+										</#if>
+										<a onclick="editConsignee('consignee-form', this)" data-id="${ct.id}" data-username="${ct.userName}" data-area="${ct.area}"
+											 data-address="${ct.address}" data-phone="${ct.phone}" data-code="${ct.code}">编辑</a>
+										<a href="/index.php?c=consignee&a=delete&id=2">删除</a>
+									</div>
+								</td>
+							</tr>
+							</#list>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 右侧结束 -->
+	</div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

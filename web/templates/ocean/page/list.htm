@@ -1,0 +1,64 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <#assign pageIndex = request.getIntParameter("pageIndex")>
+  <#assign clusterId = request.getIntParameter("clusterId")>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>页面列表<small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("page.edit", 0)}?clusterId=${clusterId}">添加新新页面</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>名称</th>
+              <th>类型</th>
+              <th>创建者</th>
+              <th>创建时间</th>
+              <th>编辑</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign datas = SiteManager.getPages(clusterId, pageIndex, pageSize)>
+            <#assign pages = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list pages as page>
+            <tr>
+              <td>${page.name}</td>
+              <td>${page.refer}</td>
+              <td>${Users.getUser(page.userId).displayName}</td>
+              <td>${page.dateCreated?datetime}</td>
+              <td>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("page.edit", page.id)}">编辑</a>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("url.list", clusterId, page.id)}">URL</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, Formater(siteUrls.getUrl("page.list"), clusterId)?replace("{1}","{0}") />
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

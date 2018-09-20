@@ -1,0 +1,317 @@
+  <#include "header"/>
+  <#assign id = request.getIntParameter("id")>
+  <#if id == 0>
+    <#assign shop = Shops.getShop(1)>
+  <#else>
+    <#assign shop = Shops.getShop(id)>
+  </#if>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>编辑店铺信息<small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="${siteUrls.getUrl("shop.list", 1)}">我的店铺列表</a></li>
+        <li class="active"><#if id == 0>创建<#else>编辑:${shop.name}</#if></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          ${ShowNotices()}
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <#if id == 0>
+              <h3 class="box-title">创建店铺</h3>
+              <#else>
+              <h3 class="box-title">编辑店铺: ${shop.name} </h3>
+              </#if>
+
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form name="shop_form" role="form" action="${siteUrls.getUrl("shop.recv", id)}" method="post">
+                <div class="box-body">
+
+                  <div class="box-body">
+
+                    <div class="form-group">
+                      <label for="shop_name">店铺名</label>
+                      <input type="text" class="form-control" id="shop_name" name="name" placeholder="请输入名称" value="${shop.name!''}">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="shop_phone">店铺电话</label>
+                      <input type="text" class="form-control" id="shop_phone" name="phone" placeholder="请输入电话" value="${shop.phone!''}">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="shop_address">店铺地址</label>
+                      <input type="text" class="form-control" id="shop_address" name="address" placeholder="请输入地址" value="${shop.address!''}">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="shop_icon">图标</label>
+                      <div class="input-group input-group-sm">
+                        <input type="text" class="form-control set-img" id="shop_icon" name="icon" placeholder="" value="${shop.icon!''}">
+                        <span class="input-group-btn">
+                          <button type="button" class="btn btn-info btn-flat" data-toggle="modal" id="btn_show_media_lib" data-target="#modal_media_lib">图库</button>
+                        </span>
+                      </div>
+
+                      <div class="input-group">
+                        <img class="img-thumbnail set-img" id="shop_img" src="${shop.icon!""}" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="shop_status">启用店铺</label>
+                      <div class="switch" data-on="danger" data-off="primary">
+                        <input type="checkbox" id="shop_status" name="status" ${Checked("1", shop.status)} value="true"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>店铺类型</label>
+                      <select class="form-control" id="shop_type" name="type">
+                        <option value="mall" ${Selected("mall", shop.type!"")}>商城</option>
+                        <option value="restaurant" ${Selected("restaurant", shop.type!"")}>餐馆</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="shop_desc">描述</label>
+                      <input type="text" class="form-control rich_text_edit" id="shop_desc" name="description" placeholder="请输入描述" value="${shop.description!''}">
+                    </div>
+
+                  </div>
+
+                  <div class="box-group" id="accordion">
+                    <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                    <div class="panel box box-primary">
+                      <div class="box-header with-border">
+                        <h4 class="box-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            开放平台设置
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="box-body">
+
+                          <label for="shop_name">微信</label>
+                          <div class="row">
+                            <div class="col-lg-4">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_appid" name="wechat_appid" placeholder="AppID" value="${shop.getString("wechat_appid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-4">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_appsecret" name="wechat_appsecret" placeholder="AppSecret" value="${shop.getString("wechat_appsecret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-4">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_token" name="wechat_token" placeholder="AccessToken" value="${shop.getString("wechat_token")!''}" readonly>
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">微信小程序</label>
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_app_appid" name="wechat_app_appid" placeholder="AppID" value="${shop.getString("wechat_app_appid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_app_appsecret" name="wechat_app_appsecret" placeholder="AppSecret" value="${shop.getString("wechat_app_appsecret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">微信开放平台</label>
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_q_appid" name="wechat_q_appid" placeholder="AppID" value="${shop.getString("wechat_q_appid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_q_appsecret" name="wechat_q_appsecret" placeholder="AppSecret" value="${shop.getString("wechat_q_appsecret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">微博</label>
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="weibo_appid" name="weibo_appid" placeholder="AppID" value="${shop.getString("weibo_appid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="weibo_appsecret" name="weibo_appsecret" placeholder="AppSecret" value="${shop.getString("weibo_appsecret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">QQ</label>
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="qq_appid" name="qq_appid" placeholder="AppID" value="${shop.getString("qq_appid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="qq_appsecret" name="qq_appsecret" placeholder="AppSecret" value="${shop.getString("qq_appsecret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">微信公众号</label>
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wechat_sub_token" name="wechat_sub_token" placeholder="Token" value="${shop.getString("wechat_sub_token")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+
+                          </div>
+                          <!-- /.row -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel box box-danger">
+                      <div class="box-header with-border">
+                        <h4 class="box-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                            支付平台设置
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="box-body">
+
+                          <label for="shop_name">微信支付</label>
+                          <div class="row">
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wxpay_app_id" name="wxpay_app_id" placeholder="appId" value="${shop.getString("wxpay_app_id")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wxpay_key" name="wxpay_key" placeholder="key" value="${shop.getString("wxpay_key")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wxpay_mchid" name="wxpay_mchid" placeholder="mchid" value="${shop.getString("wxpay_mchid")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="wxpay_secret" name="wxpay_secret" placeholder="Secret" value="${shop.getString("wxpay_secret")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                          </div>
+                          <!-- /.row -->
+
+                          <label for="shop_name">支付宝</label>
+                          <div class="row">
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="alipay_id" name="alipay_id" placeholder="支付宝AppId" value="${shop.getString("alipay_id")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="alipay_pubkey" name="alipay_pubkey" placeholder="支付宝公钥" value="${shop.getString("alipay_pubkey")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="alipay_prikey" name="alipay_prikey" placeholder="应用私钥" value="${shop.getString("alipay_prikey")!''}">
+                              </div>
+                              <!-- /input-group -->
+                            </div>
+                            <!-- /.col-lg-6 -->
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="verydows-baseurl" content="http://www.haimaoshitang.com:8090">
+  <title>系统提示 - Verydows 开源电商系统</title>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/general.css" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/prompt.css" />
+</head>
+<body>
+<div class="w800">
+  <div class="aln-c"><a href="/"><img alt="jDroplet 商城系统" src="${themeUri}/dist/images/logo.png" /></a></div>
+  <div class="prompt mt10">
+    <h1 class="c666">oops ~ 出错了</h1>
+    <h3 class="mt20 error"><#if message??>${message}</#if></h3>
+    <p class="mt20">
+      <#list links as link>
+        <a href="${link.link}">${link.title}</a>
+      </#list>
+    </p>
+  </div>
+</div>
+</body>
+</html>

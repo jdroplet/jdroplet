@@ -1,0 +1,165 @@
+<#include "header"/>
+<#include "header_normal"/>
+  <script type="text/javascript">
+      $(function(){countdown()});
+
+      function cancelOrder(e, url){
+          $(e).vdsConfirm({
+              text: '您确定要取消该订单吗?',
+              top: -25,
+              ok: function(){
+                  $.getJSON(url, {}, function(res){
+                      if(res.status == 0){
+                          $.vdsPopDialog({text: '成功取消订单', callback:function(){window.location.reload()}});
+                      } else {
+                          $.vdsPopDialog({type: 'err', text: res.msg});
+                      }
+                  });
+              },
+          });
+      }
+
+      function countdown(){
+          var obj = $('#countdown');
+          if(obj.size() == 0) return false;
+          var _countdown = parseInt(obj.data('countdown'));
+          window.setInterval(function(){
+              var _d = 0, _h = 0, _m = 0, _s = 0;
+              if(_countdown > 0){
+                  _d = Math.floor(_countdown / (60 * 60 * 24));
+                  _h = Math.floor(_countdown / (60 * 60)) - (_d * 24);
+                  _m = Math.floor(_countdown / 60) - (_d * 24 * 60) - (_h * 60);
+                  _s = Math.floor(_countdown) - (_d * 24 * 60 * 60) - (_h * 60 * 60) - (_m * 60);
+              }
+              if(_m <= 9) _m = '0' + _m;
+              if(_s <= 9) _s = '0' + _s;
+              obj.text(_d+'天'+_h+'小时'+_m+'分'+_s+'秒');
+              _countdown --;
+              obj.data('countdown', _countdown);
+          }, 1000);
+      }
+  </script>
+</head>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+  <div class="module cut">
+    <!-- 左侧开始 -->
+    <#include "user/side_bar"/>
+    <!-- 左侧结束 -->
+    <!-- 右侧开始 -->
+    <div class="w910 cut">
+      <div class="mcter">
+        <h2>订单号：${order.orderId}</h2>
+        <div class="order cut">
+          <div class="order-step mt20 cut">
+            <#assign orderStatus = {"0":"交易取消", "1":"提交订单", "4":"等待发货",  "5":"等待收货", "9":"已完成"}>
+            <ul id="order-step">
+              <#if order.status == 0>
+                <li class="s-0 ok"><h4>交易取消</h4><i></i></li>
+              <#else>
+                <#list orderStatus?keys as key>
+                <#assign isOk = "">
+                <#if key?number lte (order.status)><#assign isOk = "ok"></#if>
+                <li class="s-${key} ${isOk}">
+                  <h4><#if key == "4" && order.type == "cash">货到付款<#else>${orderStatus[key]}</#if></h4>
+                  <i></i></li>
+                <li class="arrow ${isOk}"><i></i></li>
+                </#list>
+              </#if>
+            </ul>
+          </div>
+          <div class="sdcter mt20 cut">
+            <div class="w360 fl cut">
+              <dl>
+                <dt>下单时间：</dt>
+                <dd>${order.createTime?datetime}</dd>
+              </dl>
+              <dl class="mt5">
+                <dt>收件人信息：</dt>
+                <dd>
+                  <p>${contact.userName}<font class="c666 ml10">(手机号码：${contact.phone})</font></p>
+                  <p class="mt5">${contact.area} ${contact.address}</p>
+                  <p class="mt5">${contact.code}</p>
+                </dd>
+              </dl>
+              <dl class="mt5">
+                <dt>配送方式：</dt>
+                <dd>普通快递</dd>
+              </dl>
+              <dl class="mt5">
+                <dt>支付方式：</dt>
+                <dd>支付宝</dd>
+              </dl>
+              <dl class="mt5">
+                <dt>订单金额：</dt>
+                <dd><b class="red"><font class="cny">¥</font>${order.totalAmount}</b><span class="c666 ml10">(含运费：<font class="cny">¥</font>${order.shippingAmount})</span></dd>
+              </dl>
+              <dl class="mt5">
+                <dt>留言备注：</dt>
+                <dd><font class="c999">${order.remarks}</font></dd>
+              </dl>
+            </div>
+            <div class="cdo aln-c cut">
+              <h3 class="f14 c666">订单状态：<font class="c333"><#switch order.status><#case 0>已取消<#break><#case 1>提交订单<#break><#case 4>等待发货<#break><#case 5>等待签收<#break></#switch></font></h3>
+              <#switch order.status>
+                <#case 1>
+                  <div class="c666 mt10">还有 <font class="red" id="countdown" data-countdown="6798">0天0小时0分0秒</font> 来付款，超时订单将自动取消</div>
+                  <div class="module mt20">
+                    <a class="sm-red mr10" href="${siteUrls.getUrl("pay.show", shopId)}?orderId=${order.orderId}">去付款</a>
+                    <a class="sm-gray ml10" onclick="cancelOrder(this, '${siteUrls.getUrl("order.cancel", shopId)}?orderId=${order.orderId}')">取消订单</a>
+                  </div>
+                <#break>
+                <#case 5>
+                  <div class="module mt20">
+                    <a class="sm-red mr10" href="">确认签收</a>
+                  </div>
+                <#break>
+              </#switch>
+            </div>
+          </div>
+          <!-- 商品清单开始 -->
+          <div class="tli mt10">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <th colspan="2">商品</th>
+                <th width="18%">单价(元)</th>
+                <th width="18%">数量</th>
+                <th width="18%">小计(元)</th>
+              </tr>
+              <#list items as item>
+              <tr>
+                <td width="80"><a href="${siteUrls.getUrl("item.show", item.shopId, item.productId)}" target="_blank"><img class="gim" src="" /></a></td>
+                <td>
+                  <div class="aln-l">
+                    <a href="${siteUrls.getUrl("item.show", item.shopId, item.productId)}" target="_blank">${item.name}</a>
+                  </div>
+                </td>
+                <td>${(item.price/100)?string("#.##")}</td>
+                <td>${item.quantity}</td>
+                <td>${(item.price * item.quantity / 100)?string("#.##")}</td>
+              </tr>
+              </#list>
+              <tr>
+                <td colspan="5"><div class="total fr cut">
+                  <dl>
+                    <dt>运费：</dt>
+                    <dd><font class="cny">¥</font> ${order.shippingAmount}</dd>
+                  </dl>
+                  <dl>
+                    <dt>应付款总额：</dt>
+                    <dd class="red"><font class="cny">¥</font> ${order.payAmount}</dd>
+                  </dl>
+                </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!-- 商品清单结束 -->
+        </div>
+      </div>
+    </div>
+    <!-- 右侧结束 -->
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

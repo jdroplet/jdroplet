@@ -1,0 +1,286 @@
+<#include "header"/>
+<script src="${themeUri}/dist/js/vue/vue.min.js"></script>
+<script src="${themeUri}/dist/js/vue/plugins.min.js"></script>
+<script src="/templates/ocean/dist/element-ui/index.js"></script>
+<script src="/templates/ocean/dist/js/axios.min.js"></script>
+<script src="/templates/ocean/dist/iview/iview.js"></script>
+<script src="${themeUri}/dist/js/vue/vue-croppa.min.js"></script>
+<link rel="stylesheet" href="${themeUri}/dist/js/vue/vue-croppa.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/1.4.2/theme-default/index.css">
+<link rel="stylesheet" href="/templates/ocean/dist/iview/iview.css">
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" id="app">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>编辑店铺首页<small></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+      <li><a href="${siteUrls.getUrl("shop.list", 1)}">我的店铺列表</a></li>
+      <li class="active"><#if id == 0>创建<#else>编辑:${shop.name}</#if></li>
+    </ol>
+  </section>
+  <!-- Main content -->
+  <section class="content">
+    <!-- /.box -->
+    <div class="box">
+      <!-- /.box-header -->
+      <div class="box-body">
+        ${ShowNotices()}
+        <form method="post" action="${siteUrls.getUrl("shop.main", shop.id)}">
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">首页头图</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div id="carousel-example-generic" class="carousel slide"  >
+              <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1" class=""></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2" class=""></li>
+              </ol>
+              <div class="carousel-inner">
+                <div :class="{'item':1,'active':index == 0}" style="height:300px;" v-for="(item, index) in main_carousel">
+                  <img :src="item.icon" :alt="'第'+(index+1)+'张图'">
+                  <div class="carousel-caption">
+                    <input class="form-control" type="text" placeholder="链接地址" :value="item.url" v-model.trim.lazy="item.url"> <br/>
+                    <input class="form-control" type="text" placeholder="商品id" :value="item.itemId" v-model.trim.lazy="item.itemId"> <br/>
+                    <button type="button" @click="showMediaLibDlg(item, index, onMediaSelected1)" class="btn btn-block btn-primary btn-lg">设置第{{index+1}}张图片</button>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" name="shopMainCarousel" :value="JSON.stringify(main_carousel)">
+              <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                <span class="fa fa-angle-left"></span>
+              </a>
+              <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                <span class="fa fa-angle-right"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">今日推荐</h3>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <div class="box-body">
+            <div class="row">
+              <div class="col-xs-4" v-for="(item, index) in main_recommend">
+                <div class="box-body">
+                  <div class="form-group">
+                    <label>主标题</label>
+                    <input type="text" class="form-control" placeholder="请输入主标题" :value="item.title" v-model.trim.lazy="item.title">
+                  </div>
+                  <div class="form-group">
+                    <label>副标题</label>
+                    <input type="text" class="form-control" placeholder="请输入副标题" :value="item.excerpt" v-model.trim.lazy="item.excerpt">
+                  </div>
+                  <div class="form-group">
+                    <label>链接</label>
+                    <input type="text" class="form-control" placeholder="请输入链接" :value="item.url" v-model.trim.lazy="item.url">
+                  </div>
+                  <div class="form-group">
+                    <label>商品ID</label>
+                    <input type="text" class="form-control" placeholder="请输入商品id" :value="item.itemId" v-model.trim.lazy="item.itemId">
+                  </div>
+                  <div class="form-group">
+                    <label>价格</label>
+                    <input type="text" class="form-control" placeholder="请输入价格" :value="item.price" v-model.trim.lazy="item.price">
+                  </div>
+                  <div class="form-group">
+                    <a href="javascript:;" class="thumbnail">
+                      <img style="width: auto; height: 100px;" :src="item.icon">
+                      <div class="carousel-caption">
+                        <button type="button" @click="showMediaLibDlg(item, index, onMediaSelected2)" class="btn btn-block btn-primary btn-lg">设置图片</button>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                <!-- /.box-body -->
+              </div>
+              <input type="hidden" name="shopMainRecommend" :value="JSON.stringify(main_recommend)">
+            </div>
+            <div class="form-group">
+              <label>类别</label>
+              <Tree :data="sections" :load-data="getSections" :render="renderTree" show-checkbox></Tree>
+              <cascaderMulti @on-change="array => end_code = array" :data="end_codes" placeholder="状态码"></cascaderMulti>
+            </div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <div class="box-footer">
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+  <#include "vue_comment"/>
+</div>
+<script>
+    Vue.use(Croppa);
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                croppa: {},
+                sliderVal: 0,
+                sliderMin: 0,
+                sliderMax: 0,
+                isShowUploadBtn:false,
+                end_code: [],
+                end_codes: [{
+                    value: 1000,
+                    label: "接通",
+                    children: [{
+                        label: "已报价",
+                        value: 1100,
+                        children: [],
+                        multiple: true //可忽略项，当为true时该项为多选
+                    }]
+                }],
+                selectedSections: [],
+                sections:[],
+                isShowMediaLibDlg:false,
+                atts:[],
+                selecteImgs:0,
+                postData:{"itemId":0},
+                curItem:{},
+                curCallback:null,
+                main_carousel:${shopMainCarousel},
+                main_recommend:${shopMainRecommend}
+            }
+        },
+        methods: {
+            showMediaLibDlg(item, index, callback) {
+                var me = this;
+                axios.get('/api/attachment/list.shtml?shopId=1&pageIndex=1&pageSize=8').then((resp) => {
+                    if (!resp.data.status) {
+                    me.atts = resp.data.data.objects;
+                    for(var i =0; i<me.atts.length; i++) {
+                        me.atts[i].img_url = '${attaPath}' + me.atts[i].diskFilename;
+                        me.atts[i].selected = 0;
+                    }
+                }
+            });
+                this.curItem = item;
+                this.isShowMediaLibDlg = true;
+                this.curCallback = callback;
+            },
+            onMediaSelected() {
+                this.isShowMediaLibDlg = false;
+                this.curCallback();
+            },
+            onMediaSelected1() {
+                for(var i =0; i<this.atts.length; i++) {
+                    if (this.atts[i].selected == 1) {
+                        this.curItem.icon = '${attaPath}' + this.atts[i].diskFilename;
+                        break;
+                    }
+                }
+            },
+            onMediaSelected2() {
+                this.onMediaSelected1();
+            },
+            onImgSelected(idx) {
+                var obj = this.atts[idx];
+
+                for (var i = 0; i < this.atts.length; i++) {
+                    if (this.atts[i].selected == 1)
+                        return;
+
+                }
+                obj['selected'] = 1;
+                Vue.set(this.atts, idx, obj);
+            },
+            renderTree(h, { root, node, data }) {
+                var attrs = {
+                    name:'sectionIds',
+                    id:'section-'+data.id,
+                    value:data.id,
+                    type:'checkbox'
+                };
+                if (data.values['objectId'] != undefined)
+                    attrs['checked'] = 'checked-';
+
+                return h('span', {}, [
+                    h('input', {
+                        attrs:attrs
+                    }),
+                    h('span', data.title)
+                ]);
+            },
+            getSections (item, callback) {
+                axios.get('/ebooks/section/list.api?shopId=${shopId}&pageIndex=1&pageSize=999&objectId=${post.id}&type=shop_goods&parentId=' + item.id).then((resp) => {
+                    if (resp.data.data == null) {
+                    callback([]);
+                    return;
+                }
+
+                for (var i=0; i<resp.data.data.objects.length; i++) {
+                    resp.data.data.objects[i].title = resp.data.data.objects[i].name;
+                    resp.data.data.objects[i].children = [];
+                    resp.data.data.objects[i].loading = false;
+                }
+                if (this.sections.length == 0) {
+                    this.sections = resp.data.data.objects;
+                } else {
+                    callback(resp.data.data.objects);
+                }
+            });
+            },
+            upload() {
+                var that = this;
+                if (!this.croppa.hasImage()) {
+                    alert('请选择图片')
+                    return
+                }
+
+                this.croppa.generateBlob((blob) => {
+                    var fd = new FormData()
+                    fd.append('file', blob, "crop.png")
+                fd.append('itemId', '0')
+                $.ajax({
+                    url: '${siteUrls.getUrl("file.recv")}',
+                    data: fd,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.status == 0) {
+                            that.curItem.icon = '${attaPath}' + data.data[0].path;
+                            that.isShowMediaLibDlg = false;
+                        } else {
+
+                        }
+                    }
+                })
+            })
+            },
+            onNewImage() {
+                this.sliderVal = this.croppa.scaleRatio
+                this.sliderMin = this.croppa.scaleRatio / 2
+                this.sliderMax = this.croppa.scaleRatio * 2
+            },
+
+            onSliderChange(evt) {
+                var increment = evt.target.value
+                this.croppa.scaleRatio = +increment
+            },
+
+            onZoom() {
+                this.sliderVal = this.croppa.scaleRatio
+            }
+        },
+        computed: {
+        },
+        created() {
+            this.getSections({"id":0});
+        }
+    })
+</script>
+<#include "footer"/>

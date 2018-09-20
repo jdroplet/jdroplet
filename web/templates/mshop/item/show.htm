@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta name="verydows-baseurl" content="http://www.haimaoshitang.com:8090"><meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <title>iPhoneX - Verydows 开源电商系统</title>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/general.css" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/iconfont/iconfont.css">
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/goods.css" />
+  <script type="text/javascript" src="${themeUri}/dist/js/zepto.min.js"></script>
+  <script type="text/javascript" src="${themeUri}/dist/js/verydows.mobile.js"></script>
+  <script type="text/javascript" src="${themeUri}/dist/js/goods.js"></script>
+  <script type="text/javascript">
+      var shopId = ${shopId};
+      var goodsId = ${goods.id};
+      var goodsSpecs = ${goodsSpecs};
+      var id = '${params}';
+
+      $(function(){
+          viewCartbar();
+          preserveSpace('footfixed');
+          $('#showMenuBtn').vdsTapSwapper(
+              function(){$('#topMenu').height(50);},
+              function(){$('#topMenu').height(0);}
+          );
+          albumSlider();
+      });
+
+      function addFavorite(goods_id){
+          $.asynInter("/", {goods_id:goods_id}, function(res){
+              if(res.status == 'success'){
+                  $.vdsPrompt({content:'加入收藏夹成功!'});
+              }else if(res.status == 'unlogined'){
+                  $.vdsPrompt({
+                      content:res.msg,
+                      clicked:function(){
+                          window.location.href = "/";
+                      }
+                  });
+              }
+              else{
+                  $.vdsPrompt({content:res.msg});
+              }
+          });
+      }
+  </script>
+</head>
+<body>
+<div class="wrapper" id="wrapper">
+  <!-- header start -->
+  <div class="header">
+    <div class="op lt"><a href="javascript:history.back(-1);"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>商品详情</h2>
+    <div class="op rt"><a class="pointer" id="showMenuBtn"><i class="f28 iconfont">&#xe60e;</i></a></div>
+  </div>
+  <!-- header end -->
+  <div class="absmu latent" id="topMenu">
+    <a href="/"><i class="home iconfont">&#xe606;</i><span>首页</span></a>
+    <a href="${siteUrls.getUrl("item.list", shopId, 1)}"><i class="home iconfont">&#xe60b;</i><span>商品分类</span></a>
+    <a href="${siteUrls.getUrl("cart.show", shopId)}"><i class="home iconfont">&#xe603;</i><span>购物车</span></a>
+    <a href="${siteUrls.getUrl("user.my", shopId)}"><i class="home iconfont">&#xe632;</i><span>我的</span></a>
+  </div>
+  <!-- goods imgs start -->
+  <div class="gims" id="gims">
+    <div class="slider">
+      <#list goods.pics as pic>
+      <a><img src="${attaPath}${pic}" /></a>
+      </#list>
+    </div>
+    <div class="clearfix"></div>
+    <div class="trigger"><b>1</b><span>/</span><font>1</font></div>
+  </div>
+  <!-- goods imgs end -->
+  <div class="gth">
+    <h2>${goods.name}</h2>
+    <h3 class="mt8 c888"><p>${goods.excerpt}<br/></p></h3>
+    <div class="pri mt8">
+      <span class="cny"><i>¥</i><font id="nowprice" data-price="<#if goodsSpec??>${(goodsSpec.price/100)?string("#.##")}<#else>${(goods.salePrice/100)?string("#.##")}</#if>"><#if goodsSpec??>${(goodsSpec.price/100)?string("#.##")}<#else>${(goods.salePrice/100)?string("#.##")}</#if></font></span>
+    </div>
+  </div>
+  <div class="gopts mt10" id="buyopts">
+    <#if goods.propertyName1??>
+    <dl class="ck" data-checked="1">
+      <dt data-name="${goods.propertyName1}">${goods.propertyName1}：</dt>
+      <dd>
+        <#list properties1 as pp1>
+        <a data-id="${pp1.id}" class="${(curSpec1 == pp1.id)?string("cur","")}">${pp1.name}</a>
+        </#list>
+      </dd>
+    </dl>
+    </#if>
+    <#if goods.propertyName2??>
+      <dl class="ck" data-checked="1">
+      <dt data-name="${goods.propertyName2}">${goods.propertyName2}：</dt>
+      <dd>
+        <#list properties2 as pp2>
+        <a data-id="${pp2.id}" class="${(curSpec2 == pp2.id)?string("cur","")}">${pp2.name}</a>
+        </#list>
+      </dd>
+      </dl>
+    </#if>
+    <#if goods.propertyName3??>
+      <dl class="ck" data-checked="1">
+      <dt data-name="${goods.propertyName3}">${goods.propertyName3}：</dt>
+      <dd>
+        <#list properties3 as pp3>
+        <a data-id="${pp3.id}" class="${(curSpec3 == pp3.id)?string("cur","")}">${pp3.name}</a>
+        </#list>
+      </dd>
+      </dl>
+    </#if>
+    <dl class="qty">
+      <dt>数量：</dt>
+      <dd>
+        <a class="minus" onclick="changeBuyQty('decr')">-</a><input id="buy-qty" type="text" readonly value="1" data-stock='9999' /><a class="plus" onclick="changeBuyQty('incr')">+</a>
+      </dd>
+    </dl>
+  </div>
+  <div class="gdata mt10 cut">
+    <a href="javascript:">
+      <span class="fl"><font class="f14">图文详情</font></span>
+    </a>
+    <div class="gli">
+    ${goods.description}
+    </div>
+  </div>
+  <div class="lateral mt10">
+    <div class="th"><h2><i class="icon"></i><font>热销榜</font></h2></div>
+    <div class="gli">
+      <div class="slider">
+        <div class="col">
+          <ul>
+            <#list hots as goods>
+            <li>
+              <div class="im"><a href="${siteUrls.getUrl("item.show", shopId, goods.id)}"><img alt="${goods.name}" src="${attaPath}${goods.pics[0]}" /></a></div>
+              <h3 class="mustrcut"><a href="${siteUrls.getUrl("item.show", shopId, goods.id)}">${goods.name}</a></h3>
+              <p class="sold">已售出<b>9</b>件</p>
+              <p class="price"><i>¥</i>${goods.salePrice/100}</p>
+            </li>
+            </#list>
+          </ul>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="footact" id="footfixed">
+  <div class="iact fl cut">
+    <a href="javascript:void(0)" onclick="addFavorite('1')"><i class="iconfont">&#xe605;</i><span>收藏</span></a>
+    <a id="cartbar" href="${siteUrls.getUrl("cart.show", shopId)}"><i class="iconfont">&#xe603;</i><span>购物车</span><em class="hide">0</em></a>
+  </div>
+  <div class="bact cut"><a class="add" id="addcartbtn" onclick="addToCart('${params}')">加入购物车</a><a class="buy" onclick="toBuy('1', '${siteUrls.getUrl("cart.checkout", shopId)}')">立即购买</a></div>
+</div>
+</body>
+</html>

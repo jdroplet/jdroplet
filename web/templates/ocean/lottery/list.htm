@@ -1,0 +1,80 @@
+<#import "macropager_show" as macro/>
+<#include "header"/>
+<#assign pageIndex = request.getIntParameter("pageIndex")>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>${act.name} 奖品列表
+            <small>
+                最多可以添加 ${act.getInt("item_size", 5)} 个
+            </small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li><a href="${siteUrls.getUrl("activity.list", 1)}?shopId=${shop.id}"> <#if shop??>${shop.name}</#if> 的活动列表</a></li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box box-primary">
+
+                <div class="box-header with-border ">
+                    <h3 class="box-title">所有奖品总数:</h3>
+                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">${itemCount}</span>
+                    <div class="box-tools pull-right">
+                        <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("activity.edit", activityId)}"><i class="fa fa-edit"></i> 编辑活动</a>
+                        <a class="btn btn-info btn-xs" href="${siteUrls.getUrl("lotteryuser.list", activityId, 1)}">获奖用户</a>
+                        <a class="btn btn-info btn-xs" <#if lots?size gte act.getInt("item_size", 5)>disabled="disabled"</#if> href="${siteUrls.getUrl("lottery.edit", 0)}?activityId=${act.id}&shopId=${act.shopId}"><i class="fa fa-plus"></i> 添加</a>
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="tb_pages" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>标识</th>
+                            <th>名称</th>
+                            <th>数量</th>
+                            <th>中奖率</th>
+                            <th>图片</th>
+                            <th>提示信息</th>
+                            <th>编辑</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <#list lots as lot>
+                            <tr>
+                                <td>${lot.id}</td>
+                                <td>${lot.name} <#if lot.point !=0> : ${lot.point}</#if></td>
+                                <td>${lot.count}</td>
+                                <td>${(lot.rate/totalRate*100)?string("0.#####")}%</td>
+                                <td><img class="img-thumbnail" src="${lot.icon!"${applicationPath}/${resPath}/${appName}/v2/core/images/empty.png"}"/></td>
+                                <td>${lot.message}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("lottery.edit", lot.id)}?activityId=${lot.activityId}"><i class="fa fa-edit"></i> 编辑</a>
+                                    <a class="btn btn-info btn-xs" href="${siteUrls.getUrl("lotteryuser.list", activityId, 1)}?itemId=${lot.id}">获奖用户</a>
+                                    <a class="btn btn-danger btn-xs" data-href="${siteUrls.getUrl("lottery.edit", lot.id)}">删除</a>
+                                </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+
+                <div class="box-footer">
+
+                </div>
+            </div>
+            <!-- /.box -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <#include "footer"/>

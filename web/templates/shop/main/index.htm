@@ -1,0 +1,130 @@
+<#include "header"/>
+<#include "header_normal"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/index.css" />
+<script type="text/javascript" src="${themeUri}/dist/js/carousel.js"></script>
+<!-- 主体开始 -->
+<div class="container w1100">
+  <div class="module cut">
+    <!-- 商品分类开始 -->
+    <div class="catebar w210 fl"><ul id="catebar">
+      <li><a href="/index.php?c=category&a=index&id=1">手机</a></li>
+      <li class="haschild">
+        <b>&gt;</b><a href="/index.php?c=category&a=index&id=2">电脑</a>
+        <div><a href="/index.php?c=category&a=index&id=8">平板电脑</a><a href="/index.php?c=category&a=index&id=7">笔记本</a></div>
+      </li>
+      <li class="haschild">
+        <b>&gt;</b><a href="/index.php?c=category&a=index&id=3">家电</a>
+        <div><a href="/index.php?c=category&a=index&id=9">电视</a><a href="/index.php?c=category&a=index&id=14">空调</a></div>
+      </li>
+      <li><a href="/index.php?c=category&a=index&id=4">汽车用品</a></li>
+      <li><a href="/index.php?c=category&a=index&id=5">个护化妆</a></li>
+      <li class="haschild">
+        <b>&gt;</b><a href="/index.php?c=category&a=index&id=6">珠宝饰品</a>
+        <div><a href="/index.php?c=category&a=index&id=11">项链</a><a href="/index.php?c=category&a=index&id=12">手镯</a><a href="/index.php?c=category&a=index&id=13">戒指</a></div>
+      </li>
+      <li><a href="/index.php?c=category&a=index&id=10">食品酒类</a></li>
+    </ul>
+    </div>
+    <!-- 商品分类结束 -->
+    <!-- 轮播图片广告开始 -->
+    <div class="w640 fl cut"><div class="carousel cut">
+      <div class="carousel-imgs cut">
+        <#list shopMainCarousel as smc>
+        <a href="${smc.url}"><img src="${smc.icon}" width="630" height="240" alt="${smc.title}" border="0" /></a>
+        </#list>
+      </div>
+      <ul class="carousel-tog"><li>0</li><li>1</li><li>2</li></ul>
+    </div></div>
+    <!-- 轮播图片广告结束 -->
+    <!-- 资讯开始 -->
+    <div class="w240 fr cut">
+      <div class="news mt10">
+        <h2><a href="article/index.html" class="fr">更多 <i>&gt;</i></a>最新资讯</h2>
+        <ul>
+          <#list news as new>
+          <li><a title="${new.title}" href="${new.url}"><b>[资讯]</b>${new.title}</a></li>
+          </#list>
+        </ul>
+      </div>
+      <!-- 广告位(240x70)开始 -->
+
+      <!-- 广告位(240x70)结束 -->
+    </div>
+    <!-- 资讯结束 -->
+  </div>
+  <!-- 新品上市开始 -->
+  <div class="module mt30 cut">
+    <div class="gli_t"><h2 class="fl">新品上市</h2></div>
+    <div class="gli w1110">
+      <ul>
+        <#list goodses as goods>
+        <li>
+          <div class="im"><a href="${siteUrls.getUrl("item.show", shop.id, goods.id)}"><img alt="${goods.name}" src="${attaPath}/${goods.pics[0]}" /></a></div>
+          <h3><a href="${siteUrls.getUrl("item.show", shop.id, goods.id)}">${goods.name}</a></h3>
+          <p class="price"><i>¥</i> ${goods.salePrice}</p>
+        </li>
+        </#list>
+      </ul>
+    </div>
+  </div>
+  <!-- 首页横幅Banner广告位一(1110x90)开始 -->
+  <!-- 首页横幅Banner广告位一(1110x90)结束 -->
+  <!-- 新品上市结束 -->
+  <!-- 推荐商品开始 -->
+  <div class="cl"></div>
+  <div class="module mt20 cut">
+    <div class="gli_t">
+      <h2>今日推荐</h2>
+    </div>
+    <div class="gli w1110">
+      <ul>
+        <#list shopMainRecommend as post>
+        <#assign url = post.url>
+          <#if url == "">
+          <#assign url = siteUrls.getUrl("item.show", shop.id, post.itemId)>
+        </#if>
+        <li>
+          <div class="im">
+            <a href="${url}">
+            <img alt="${post.title}" src="${post.icon}" />
+            </a>
+          </div>
+          <h3><a href="${url}">${post.title}</a></h3>
+          <p class="price"><i>¥</i> ${post.price}</p>
+        </li>
+        </#list>
+      </ul>
+    </div>
+  </div>
+  <!-- 推荐商品结束 -->
+  <!-- 首页横幅Banner广告位二(1110x100)开始 -->
+
+  <!-- 首页横幅Banner广告位二(1110x100)结束 -->
+  <!-- 特价促销开始 -->
+  <div class="cl"></div>
+  <div class="module mt20 cut">
+    <div class="gli_t">
+      <h2>热推商品</h2>
+    </div>
+    <div class="gli w1110">
+      <ul>
+        <#list shopMainRecommend as post>
+        <#assign url = post.url>
+        <#if url == "">
+          <#assign url = siteUrls.getUrl("item.show", shop.id, post.itemId)>
+        </#if>
+        <li>
+          <div class="im"><a href="${url}"><img alt="${post.title}" src="${post.icon}" /></a></div>
+          <h3><a href="${url}">${post.title}</a></h3>
+          <p class="price"><i>¥</i> ${post.price}</p>
+        </li>
+        </#list>
+      </ul>
+    </div>
+  </div>
+  <!-- 特价促销结束 -->
+  <!-- 首页横幅Banner广告位三(1110x80)开始 -->
+  <!-- 首页横幅Banner广告位三(1110x80)结束 -->
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

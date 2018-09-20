@@ -1,0 +1,141 @@
+<#include "header"/>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>编辑作品<small></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+      <li><a href="${siteUrls.getUrl("book.list", 1)}">所有作品</a></li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="box">
+      <!-- /.box-header -->
+      <div class="box-body">
+        ${ShowNotices()}
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <#if id == 0>
+              <h3 class="box-title">添加作品</h3>
+              <#else>
+                <h3 class="box-title">编辑作品信息：${book.title}</h3>
+            </#if>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form role="form" action="${siteUrls.getUrl("book.edit", id)}" method="post">
+          <div class="box-body">
+
+            <div class="form-group">
+              <label for="book_name">作品名</label>
+              <input type="text" class="form-control" id="book_name" name="title" placeholder="请输入作品名" value="${book.title}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_author">作者笔名</label>
+              <input type="text" class="form-control" id="book_author" name="author" placeholder="请输入作者笔名" value="${book.author}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_authorId">作品所属用户id</label>
+              <input type="text" class="form-control" id="book_authorId" name="author_id" placeholder="请输入作品所属用户id" value="${book.authorId}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_refer">来源</label>
+              <input type="text" class="form-control" id="book_refer" name="refer" placeholder="请输入作品来源" value="${book.refer}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_status">状态</label>
+              <select id="status" id="book_status" name="status" class="form-control">
+                <option value="1" ${(book.status == 1)?string("selected", "")}>发布</option>
+                <option value="2" ${(book.status == 2)?string("selected", "")}>隐藏</option>
+                <option value="4" ${(book.status == 4)?string("selected", "")}>删除</option>
+                <option value="8" ${(book.status == 8)?string("selected", "")}>待审核</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="book_finished">完结状态</label>
+              <select id="book_finished" name="finished" class="form-control">
+                <option value="1" ${book.finished?string("selected", "")}>完本</option>
+                <option value="0" ${book.finished?string("", "selected")}>连载</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="book_chapterType">章卷</label>
+              <select id="book_chapterType" name="chapter_type" class="form-control">
+                <option value="1" ${(book.chapterType == 1)?string("selected", "")}>卷</option>
+                <option value="0" ${(book.chapterType == 2)?string("selected", "")}>章</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="book_chargeType">收费类型</label>
+              <select id="book_chargeType" name="charge_type" class="form-control">
+                <option value="1" ${(book.chargeType == 1)?string("selected", "")}>免费</option>
+                <option value="0" ${(book.chargeType == 2)?string("selected", "")}>卷</option>
+                <option value="0" ${(book.chargeType == 4)?string("selected", "")}>章</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="book_point">收费起始点</label>
+              <input type="text" class="form-control" id="book_point" name="point" placeholder="请输入收费起始点" value="${book.point}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_tags">标签</label>
+              <input type="text" class="form-control" id="book_tags" name="tags" placeholder="请输入标签" value="${book.tags}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_excerpt">推荐语</label>
+              <input type="text" class="form-control" id="book_excerpt" name="excerpt" placeholder="请输入收费起始点" value="${book.excerpt}">
+            </div>
+
+            <div class="form-group">
+              <label for="book_description">简介</label>
+              <textarea class="form-control" id="book_description" name="description" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="book_cover">封面</label>
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control set-img" id="book_cover" name="cover" placeholder="" value="${book.cover!''}">
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-info btn-flat" data-toggle="modal" id="btn_show_media_lib" data-target="#modal_media_lib">图库</button>
+                </span>
+              </div>
+
+              <div class="input-group">
+                <img class="img-thumbnail set-img" id="book_cover_img" src="${book.cover!""}" />
+              </div>
+            </div>
+
+            <input type="hidden" name="level" value="0">
+            <input type="hidden" name="words" value="${book.words}">
+          </div>
+
+          <div class="box-footer">
+            <button type="submit" class="btn btn-primary">提交</button>
+          </div>
+          </form>
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<#include "footer"/>

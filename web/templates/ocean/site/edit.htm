@@ -1,0 +1,73 @@
+  <#include "header"/>
+  <#assign id = request.getIntParameter("id")>
+  <#assign clusterId = request.getIntParameter("clusterId")>
+  <#if id == 0>
+    <#assign site = SiteManager.getSite(1)>
+  <#else>
+    <#assign site = SiteManager.getSite(id)>
+  </#if>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>站点设置<small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="${siteUrls.getUrl("site.list", clusterId,1)}">站点列表</a></li>
+        <li class="active"><#if id == 0>创建<#else>编辑:${site.name}</#if></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          ${ShowNotices()}
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <#if id == 0>
+              <h3 class="box-title">创建站点</h3>
+              <#else>
+              <h3 class="box-title">编辑站点：${site.name}</h3>
+              </#if>
+
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form name="site_form" role="form" action="${siteUrls.getUrl("site.recv", clusterId, id)}" method="post">
+                <div class="box-body">
+                <div class="form-group">
+                  <label for="site_title">站点名称</label>
+                  <input type="text" class="form-control" id="site_title" name="title" placeholder="请输入名称" value="${site.title!''}">
+                </div>
+                <div class="form-group">
+                  <label for="site_desc">描述</label>
+                  <input type="text" class="form-control" id="site_desc" name="description" placeholder="请输入名称" value="${site.description!''}">
+                </div>
+                <div class="form-group">
+                  <label for="site_keywords">keywords</label>
+                  <input type="text" class="form-control" id="site_keywords" name="keywords" placeholder="请输入keywords" value="${site.keywords!''}">
+                </div>
+                <div class="form-group">
+                  <label for="site_appRoot">站点地址</label>
+                  <input type="text" class="form-control" id="site_appRoot" name="appRoot" placeholder="请输入refer" value="${site.appRoot!''}">
+                </div>
+                </div>
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

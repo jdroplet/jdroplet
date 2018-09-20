@@ -1,0 +1,134 @@
+<#include "header" />
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/order.css" />
+<script type="text/javascript" src="${themeUri}/dist/js/order.js"></script>
+<script type="text/javascript" src="${themeUri}/dist/js/consignee.js"></script>
+<script type="text/javascript">
+    $(function(){
+        getFreight();
+    });
+
+    function submitOrder(){
+        var csn_id = $('#consignee h4').data('id') || false;
+        if(!csn_id){
+            $.vdsPrompt({content:'您必须先创建一个收件人信息'});
+            return false;
+        }
+        window.order_form.submit();
+    }
+</script>
+<div class="wrapper" id="wrapper">
+  <!-- header start -->
+  <div class="header">
+    <div class="op lt"><a href="javascript:history.back(-1)"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>确认订单</h2>
+  </div>
+  <!-- header end -->
+  <div class="confirm">
+    <form id="order_form" class="confirm" method="post" action="${siteUrls.getUrl("order.create", 1)}?redirect=${redirect?url}">
+    <div class="row" id="consignee">
+      <div class="lc">收件人</div>
+      <#if contact??>
+      <div class="rc" onclick="popCsnList()">
+        <div class="unfold fr"><i class="iconfont">&#xe614;</i></div>
+        <h4 class="c666" data-id="${contact.id}">${contact.userName}<span class="ml10">${contact.phone}</span></h4>
+        <p class="mt5 c888">${contact.area} ${contact.address}<br />${contact.code}</p>
+        <input type="hidden" name="contactId" value="${contact.id}">
+      </div>
+      <#else>
+      <div class="rc" onclick="popCsnList()"><a class="add" onclick="addCsn()">+ 添加收件人</a></div>
+      </#if>
+    </div>
+    <div class="row">
+      <div class="lc">配送方式</div>
+      <div class="rc">
+        <div class="vslt">
+          <select id="shipping_method" onchange="getFreight()">
+            <option value="1" selected="selected">普通快递</option>
+          </select>
+          <span><i class="iconfont">&#xe615;</i></span>
+        </div>
+      </div>
+    </div>
+    <div class="parcel row" id="parcel">
+      <div class="lc">包裹清单</div>
+      <div class="rc">
+        <ul class="gli" id="gli">
+          <#list car.items as item>
+          <#assign goods = item.object.goods>
+          <li>
+            <div class="im"><img alt="iPhoneX" src="" /></div>
+            <div class="info">
+              <p class="name">${goods.name}</p>
+              <p class="opts mt5">
+                <#if goods.propertyName1??>
+                  <span class="mr5">[${goods.propertyName1}: <font>${item.object.property0}</font>]</span>
+                </#if>
+
+                <#if goods.propertyName2??>
+                  <span class="mr5">[${goods.propertyName2}: <font>${item.object.property1}</font>]</span>
+                </#if>
+
+                <#if goods.propertyName3??>
+                  <span class="mr5">[${goods.propertyName3}: <font>${item.object.property2}</font>]</span>
+                </#if>
+              </p>
+              <p class="subtotal mt5 c666"><span class="price mr10"><i class="cny">¥</i><font class="f14">${(item.object.price/100)?string("#.##")}</font></span>×<b class="q">${item.count}</b></p>
+            </div>
+          </li>
+          </#list>
+        </ul>
+      </div>
+    </div>
+    <div class="memos row">
+      <div class="lc">留言备注</div>
+      <div class="rc"><textarea name="remarks" class="vtextarea" id="remarks" placeholder="填写您对订单需要备注的内容，没有请留空"></textarea></div>
+    </div>
+    <div class="amount">
+      <h3 class="f14 center">订单合计</h3>
+      <dl>
+        <dt>商品合计:</dt>
+        <dd class="c666"><i class="cny">¥</i><font class="f14" id="goods-amount">${(totalAmount/100)?string("#.##")}</font></dd>
+      </dl>
+      <dl>
+        <dt>运费:</dt>
+        <dd class="c666"><i class="cny">¥</i><font class="f14" id="shipping-amount">0.00</font></dd>
+      </dl>
+      <dl class="totals">
+        <dt class="f14">共计:</dt>
+        <dd class="f18"><i class="cny">¥</i><font id="total-amount">${(totalAmount/100)?string("#.##")}</font></dd>
+      </dl>
+    </div>
+    <div class="submit mt20"><a class="f14 xauto center" onClick="submitOrder()">提交订单</a></div>
+    <input type="hidden" name="shopId" id="shopId" value="${shopId}" />
+    <input type="hidden" name="productId" id="productId" value="0" />
+    <input type="hidden" name="itemId" id="itemId" value="0" />
+    <input type="hidden" name="totalAmount" id="totalAmount" value="${totalAmount}" />
+    <input type="hidden" name="quantity" id="quantity" value="1" />
+    <input type="hidden" name="type" id="type" value="goods" />
+    <input type="hidden" name="type" id="from" value="${from}" />
+    </form>
+  </div>
+</div>
+<!-- 收件人列表开始 -->
+<div class="csnli poper hide" id="csnli">
+  <div class="header">
+    <div class="op lt"><a onclick="hideCsnList()"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>选择收件人</h2>
+  </div>
+  <div class="opts module">
+    <#list contacts as ct>
+    <dl id="csnopt-3" class="${ct.isDefault()?string("checked","")}">
+      <dd class="l" onclick="onChangeCsn(this)"><i class="iconfont">&#xe61a;</i></dd>
+      <dd class="r" data-json='' onclick="editCsn(this)"><i class="iconfont">&#xe617;</i></dd>
+      <dd class="m">
+        <h4 class="c666" data-id="3">${ct.userName}<span class="ml10">${ct.phone}</span></h4>
+        <p class="mt5 c888">${ct.area} ${ct.address}<br />${ct.code}</p>
+      </dd>
+    </dl>
+    </#list>
+    <a class="add" href="${siteUrls.getUrl("user.editcontact", shopId, 0)}">+ 添加收件人</a>
+  </div>
+</div>
+<!-- 收件人列表结束 -->
+</body>
+</html>

@@ -1,0 +1,88 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <#assign pageIndex = request.getIntParameter("pageIndex")>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>活动列表<small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("activity.edit", 0)}?shopId=${shopId}"><i class="fa fa-plus"></i> 添加</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">${shop.name} 的活动</h3>
+          <div class="box-tools pull-right">
+            <#assign shops = Shops.getShops("", loggedin_user.id, 1, 99).objects >
+              <form method="get" action="${siteUrls.getUrl("activity.list")}">
+              <select class="form-control" name="shopId" onchange="submit()">
+                <option value="">--选择一个店铺--</option>
+                <#list shops as shop>
+                  <option value="${shop.id}" ${(shop.id == shopId)?string("selected='selected'", "")}>${shop.name}</option>
+                </#list>
+              </select>
+              </form>
+          </div>
+        </div>
+
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>id</th>
+              <th>名称</th>
+              <th>创建时间</th>
+              <th>开始时间</th>
+              <th>结束时间</th>
+              <th>状态</th>
+              <th>类型</th>
+              <th>编辑</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign type_groups = {"turntable":"转盘","invite":"助力","collection":"集福","pray":"求签"}>
+            <#assign status_txt = {"1":"启用","2":"禁用"}>
+            <#assign activities = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list activities as activity>
+            <tr>
+              <td>${activity.id}</td>
+              <td>${activity.name}</td>
+              <td>${activity.createTime?datetime}</td>
+              <td>${activity.startTime?datetime}</td>
+              <td>${activity.expired?datetime}</td>
+              <td>${status_txt[activity.status+""]}</td>
+              <td>${type_groups[activity.type]}</td>
+              <td>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("activity.edit", activity.id)}"><i class="fa fa-edit"></i> 编辑</a>
+                <#if activity.type == "collection" || activity.type == "rain">
+                  <a class="btn  btn-info btn-xs" href="${siteUrls.getUrl("lottery.list", activity.id)}">查看奖品</a>
+                </#if>
+                <a class="btn  btn-info btn-xs" href="${siteUrls.getUrl("lotteryuser.list", activity.id, 1)}">获奖用户</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("activity.list")/>
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

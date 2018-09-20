@@ -1,0 +1,70 @@
+  <#include "header"/>
+  <#assign pageIndex = request.getIntParameter("page_index")>
+  <link rel="stylesheet" href="${themeUri}/dist/plugins/simplemodal/css/osx.css">
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>开放平台授权列表<small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("oauth.edit", 0)}">添加新授权</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_oauths" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>名称</th>
+              <th>appid</th>
+              <th>appsecret</th>
+              <th>添加时间</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign _datas = OAuthConsumers.getOAuthConsumers(pageIndex, pageSize)![]>
+            <#list _datas.objects as oauth>
+            <tr>
+              <td>${oauth.name}</td>
+              <td>${oauth.appId}</td>
+              <td>${oauth.appSecret}</td>
+              <td>${oauth.dateCreated?datetime}</td>
+              <td>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("oauth.edit", oauth.id)}">编辑</a>
+                <a class="btn btn-block btn-danger btn-xs" data-href="${siteUrls.getUrl("oauth.delete", oauth.id)}">删除</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- Simplemodal -->
+  <script src="${themeUri}/dist/plugins/simplemodal/js/jquery.simplemodal.js"></script>
+  <script src="${themeUri}/dist/plugins/simplemodal/js/osx.js"></script>
+  <script src="${themeUri}/dist/plugins/simplemodal/js/messagebox.js"></script>
+  <script>
+    $(function () {
+
+      $('#tb_oauths .btn-danger').click(function() {
+        var opt_url = $(this).data('href');
+
+        MessageBox.show("确定要删除么？删除后无法复原", MessageBoxButtons.OK|MessageBoxButtons.Cancel, 0, function(){
+            window.location.href = opt_url;
+        });
+        return false;
+      });
+    });
+  </script>
+  <#include "footer"/>

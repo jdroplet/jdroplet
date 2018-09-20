@@ -1,0 +1,68 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1> 我的店铺列表
+      <small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("shop.edit", 0)}"><i class="fa fa-plus"></i> 添加店铺</a></small>
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>id</th>
+              <th>图标</th>
+              <th>店铺名</th>
+              <th>是否启用</th>
+              <th>描述</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign shops = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list shops as shop>
+            <tr>
+              <td>${shop.id}</td>
+              <td><img class="img-thumbnail" src="${shop.icon!"${applicationPath}/${resPath}/${appName}/v2/core/images/empty.png"}"/></td>
+              <td>${shop.name} <br/><br/> <a href="">店铺会员</a> <br/> <a href="${siteUrls.getUrl("order.list",1)}?shopId=${shop.id}">店铺订单</a> </td>
+              <td>${(shop.status == 1)?string("是", "否")}</td>
+              <td>${shop.description}</td>
+              <td>${shop.createTime?datetime}</td>
+              <td>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("shop.edit", shop.id)}"><i class="fa fa-edit"></i> 编辑</a>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("shop.main", shop.id)}"><i class="fa fa-edit"></i> 首页</a>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("goods.list", 1)}?shopId=${shop.id}"><i class="fa fa-edit"></i> 商品</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("shop.list") />
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

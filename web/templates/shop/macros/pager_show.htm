@@ -1,0 +1,82 @@
+<#-- 分页控件-->
+<#macro pager _pageIndex _pageSize _totalRecords _pageUrl>
+  <#local _totalPage = _totalRecords / _pageSize>
+  <#local _dataCmm = _totalRecords % _pageSize>
+  <#if _dataCmm != 0>
+    <#local _totalPage = _totalPage + 1>
+  </#if>
+  <#-- 默认起始页 -->
+  <#local _startIndex = _pageIndex - 5/>
+  <#-- 默认结束页 -->
+  <#local _endIndex = 1/>
+  <#-- 最后一页 -->
+  <#local _lastIndex = _totalPage>
+  <#-- 上一页号码 -->
+  <#local _preIndex = _pageIndex - 1 />
+  <#-- 下一页号码 -->
+  <#local _nextIndex = _pageIndex + 1 />
+
+  <#if _startIndex lte 0>
+    <#local _startIndex = 1 />
+    <#local _endIndex = _startIndex + 9 />
+  <#else>
+    <#local _endIndex = _startIndex + 9 />
+  </#if>
+
+  <#if _endIndex gte _totalPage>
+    <#local _startIndex = _pageIndex - 5 />
+    <#local _endIndex = _totalPage />
+    <#if _startIndex gte _totalPage - 9>
+      <#local _startIndex = _totalPage - 9/>
+    </#if>
+    <#if _startIndex lte 0>
+      <#local _startIndex = 1 />
+    </#if>
+  </#if>
+
+  <#local _pages=[] />
+  <#if _totalPage != 0>
+    <#list _startIndex .. _endIndex as _index>
+      <#if _pageIndex == _index >
+        <#local _pages = _pages + [{"pageNum" : _index ,"url" : Formater(_pageUrl, _index), "current" : true}] />
+      <#else>
+        <#local _pages = _pages + [{"pageNum" : _index ,"url" : Formater(_pageUrl, _index), "current" : false}] />
+      </#if>
+    </#list>
+  </#if>
+
+  <#local _htmlNoLinkLine>
+    <span class="tot">共计<b>${_totalRecords}</b>项</span>
+    <#if _pageIndex == _startIndex>
+      <span class="disabled">首页</span>
+      <span class="disabled">上一页</span></a>
+    <#else>
+      <a href="${Formater(_pageUrl, 1)}">首页</a>
+      <a href="${Formater(_pageUrl, _preIndex)}">上一页</a>
+    </#if>
+
+    <#list _pages as page>
+
+      <#if page.current?default(false)>
+        <span class="cur">${page.pageNum}</span>
+      <#else>
+        <a href="${page.url}">${page.pageNum}</a>
+      </#if>
+
+    </#list>
+
+    <#if _pageIndex == _totalPage>
+      <span class="disabled">下一页</span>
+      <span class="disabled">末页/共${_totalPage?default(0)}页</span>
+    <#else>
+      <a href="${Formater(_pageUrl, _nextIndex)}">下一页</a>
+      <a href="${Formater(_pageUrl, _lastIndex)}">末页/共${_totalPage?default(0)}页</a>
+    </#if>
+
+  </#local>
+  <div class="aln-c mt10 pad10 cut">
+    <div class="paging small">
+    ${_htmlNoLinkLine}
+    </div>
+  </div>
+</#macro>

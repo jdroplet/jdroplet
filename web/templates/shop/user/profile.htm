@@ -1,0 +1,141 @@
+<#include "header"/>
+<#include "header_normal"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/jquery.Jcrop.min.css" />
+<script type="text/javascript" src="${themeUri}/dist/js/jquery.Jcrop.min.js"></script>
+<script type="text/javascript">
+    var jcrop_obj;
+
+    function uploadAvatar(){
+        $('#upload-avatar-btn').prop('disabled', true).removeClass('sm-blue').addClass('sm-gray').text('正在上传...');
+        $('#avatar-form').submit();
+    }
+
+    function showCrop(status, data){
+        if(status == 'success'){
+            $('#target-avatar').attr('src', data).load(function(){
+                $.vdsMasker(true);
+                $('#crop').css({
+                    left: ($(window).width() - $('#crop').width()) / 2,
+                    top: ($(window).height() - $('#crop').height()) /2,
+                }).removeClass('hide');
+
+                $('#target-avatar').Jcrop({
+                    aspectRatio: 1,
+                    onSelect: function(c){
+                        $('#avatar-x').val(c.x);$('#avatar-y').val(c.y);
+                        $('#avatar-w').val(c.w);$('#avatar-h').val(c.h);
+                    }
+                }, function(){jcrop_obj = this;});
+            });
+        }else{
+            alert('上传头像失败...');
+            $('#upload-avatar-btn').prop('disabled', false).removeClass('sm-gray').addClass('sm-blue').text('上传头像图片');
+        }
+    }
+
+    function saveCrop(){
+        var streams = $('#target-avatar').attr('src').split(';base64,'), mime = streams[0].replace('data:', '');
+
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: "/index.php?m=api&c=user&a=avatar&step=crop",
+            data: {streams:streams[1], mime:mime, x:$('#avatar-x').val(), y:$('#avatar-y').val(), w:$('#avatar-w').val(), h:$('#avatar-h').val()},
+            beforeSend: function(){
+                $('#save-avatar-btn').prop('disabled', true).removeClass('sm-green').addClass('sm-gray').text('正在剪切头像...');
+            },
+            success: function(res){
+                if(res.status == 'success'){
+                    $('#user-avatar').attr('src', baseUrl+'/upload/user/avatar/'+res.avatar+'?'+Math.random());
+                    closeCrop();
+                }else if(res.status == 'unlogined'){
+                    alert('您还没有登陆或登录超时');
+                    window.location.href = "/index.php?c=user&a=login";
+                }else{
+                    alert('保存头像失败...');
+                    $('#save-avatar-btn').prop('disabled', false).removeClass('sm-gray').addClass('sm-green').text('保存头像');
+                }
+            }
+        });
+    }
+
+    function closeCrop(){
+        $.vdsMasker(false);
+        $('#target-wrapper').find('img').remove();
+        $('#crop').addClass('hide');
+        $('#upload-avatar-btn').prop('disabled', false).removeClass('sm-gray').addClass('sm-blue').text('上传头像图片');
+        $('#save-avatar-btn').prop('disabled', false).removeClass('sm-gray').addClass('sm-green').text('保存头像');
+        $('#avatar-form')[0].reset();
+        jcrop_obj.destroy();
+    }
+
+    function updateProfile(btn){
+        $('#nickname').vdsFieldChecker({rules:{maxlen:[30, '昵称不能超过30个字符']}});
+        $('#qq').vdsFieldChecker({rules:{format:[/^$|^[1-9][0-9]{4,12}$/.test($('#qq').val()), '无效的QQ号码']}});
+        $('#signature').vdsFieldChecker({rules:{maxlen:[120, '个性签名不能超过120个字符']}});
+        $('#profile-form').vdsFormChecker({
+            beforeSubmit: function(){
+                $(btn).prop('disabled', true).text('正在提交...');
+            }
+        });
+    }
+</script>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+  <div class="module cut">
+    <!-- 左侧开始 -->
+    <#include "user/side_bar"/>
+    <!-- 左侧结束 -->
+    <!-- 右侧开始 -->
+    <div class="w910">
+      <div class="profile mcter">
+        <h2>个人资料</h2>
+        <div class="form cut">
+          <dl class="avatar cut">
+            <dt><img id="user-avatar" src="http://www.haimaoshitang.com:8090/public/image/noavatar_m.gif" /></dt>
+            <dd>
+              <p class="c666">我的头像</p>
+              <div class="browsefile">
+                <form id="avatar-form" action="/index.php?m=api&c=user&a=avatar&step=upload" enctype="multipart/form-data" method="post" target="uploadframe">
+                  <button type="button" class="sm-blue" id="upload-avatar-btn">上传头像图片</button>
+                  <input type="file" name="avatar_file" class="upavatar" onChange="uploadAvatar()" />
+                  <input type="hidden" name="callback" value="showCrop" /><!-- 回调函数方法名 -->
+                </form>
+              </div>
+              <iframe id="uploadframe" name="uploadframe" class="hide"></iframe>
+            </dd>
+          </dl>
+          <!-- 剪裁头像区开始 -->
+          <div class="avatar-crop hide" id="crop">
+            <h3><a onclick="closeCrop()">×</a>上传头像图片</h3>
+            <div class="aln-c"><img id="target-avatar" src="" /></div>
+            <div class="save"><button type="button" class="sm-green" id="save-avatar-btn" onclick="saveCrop()">保存头像</button></div>
+            <input type="hidden" id="avatar-x" value="0" />
+            <input type="hidden" id="avatar-y" value="0" />
+            <input type="hidden" id="avatar-w" value="300" />
+            <input type="hidden" id="avatar-h" value="300" />
+          </div>
+          <!-- 剪裁头像区结束 -->
+          <form method="post" action="${siteUrls.getUrl("user.profile", 1)}" id="profile-form">
+            <dl class="mt30">
+              <dt><label for="displayName">昵称：</label></dt>
+              <dd><input name="displayName" id="displayName" class="txt" type="text" value="" /></dd>
+            </dl>
+            <dl>
+              <dt><label>性别：</label></dt>
+              <dd class="gender">
+                <label><input name="gender" type="radio" value="2" checked="checked" /><font class="ml5">保密</font></label>
+                <label class="ml10"><input name="gender" type="radio" value="1" /><font class="ml5">男</font></label>
+                <label class="ml10"><input name="gender" type="radio"  value="0" /><font class="ml5">女</font></label>
+              </dd>
+            </dl>
+            <div class="profile-btn mt30"><button type="button" class="sm-green" onclick="updateProfile(this)">更新资料</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- 右侧结束 -->
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

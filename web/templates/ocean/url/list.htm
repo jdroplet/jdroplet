@@ -1,0 +1,61 @@
+  <#include "header"/>
+  <#assign pageId = request.getIntParameter("pageId")>
+  <#assign clusterId = request.getIntParameter("clusterId")>
+  <#assign page = SiteManager.getPage(pageId)>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>${page.name} URL列表<small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("url.edit", 0)}?clusterId=${clusterId}&pageId=${pageId}">添加新URL</a></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tbpages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>URL</th>
+              <th>允许的角色</th>
+              <th>描述</th>
+
+              <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign dataset = SiteManager.getUrlPatterns(clusterId, pageId, 1, pageSize)>
+            <#assign urls = dataset.objects>
+            
+            <#list urls as url>
+            <tr>
+              <#if url.params?length == 0>
+                <td>${url.page.name}/${url.action}.shtml</td>
+              <#else>
+                <td>${url.page.name}/${url.action}/${url.params?replace(",", "/")}.shtml</td>
+              </#if>
+
+              <td>${url.allows}</td>
+              <td>${url.description}</td>
+
+              <td>
+                <a class="btn btn-block btn-primary btn-xs" href="${siteUrls.getUrl("url.edit", url.id)}?clusterId=${clusterId}&pageId=${pageId}">编辑</a>
+                <a class="btn btn-block btn-danger btn-xs" data-href="${siteUrls.getUrl("url.delete", url.id)}">删除</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

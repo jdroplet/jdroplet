@@ -1,0 +1,57 @@
+<#include "header"/>
+<#include "header_normal"/>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+  <div class="module cut">
+    <!-- 左侧开始 -->
+    <#include "user/side_bar"/>
+    <!-- 左侧结束 -->
+    <!-- 右侧开始 -->
+    <div class="w910 cut">
+      <div class="w660 fl cut">
+        <div class="welcome w658 cut">
+          <h3>您好<font class="c333 ml5">${user.displayName}</font>，欢迎登陆<font class="ml5">jDroplet 商城系统</font></h3>
+          <p class="remind red">您的邮箱还未通过邮件认证</font><a class="ml10" href="/index.php?c=security&a=index">[立即认证]</a></p>
+          <div class="module mt10 cut">
+            <dl><dt>账户余额：</dt><dd><font class="red">0.00</font> 元</dd></dl>
+            <dl><dt>积分：</dt><dd><font class="red">0</font></dd></dl>
+            <dl><dt>成长值：</dt><dd>0</dd></dl>
+            <dl><dt>会员类别：</dt><dd><font>初级会员</font></dd></dl>
+            <dl><dt>上次登录：</dt><dd><font class="c999">${user.lastvisit?datetime}</font></dd></dl>
+          </div>
+        </div>
+        <!-- 最近订单开始 -->
+        <div class="w658 mt10 cut">
+          <h2><a href="${siteUrls.getUrl("user.orders", shopId, 1)}" class="fr">查看全部订单</a>近期订单</h2>
+          <p class="aln-c pad10 c999">暂无订单</p>
+        </div>
+        <!-- 最近订单结束 -->
+        <!-- 最近收藏开始 -->
+        <div class="w658 mt10 cut">
+          <h2><a href="/" class="fr">查看全部收藏</a>近期收藏</h2>
+          <p class="aln-c pad10 c999">暂无收藏</p>
+        </div>
+        <!-- 最近收藏结束 -->
+      </div>
+      <div class="w240 fr cut">
+        <div class="sdcter cut">
+          <h2 class="srth"><a class="fr" href="/index.php?c=user&a=profile">编辑</a>个人信息</h2>
+          <div class="module mt10 cut">
+            <div class="avatar fl"><img src="${themeUri}/dist/images/noavatar_m.gif" /></div>
+            <ul>
+              <li>昵称:<font class="c999 ml8">${user.displayName}</font></li>
+              <li>性别:<b class="ml8">保密</b></li>
+              <li><a href="${siteUrls.getUrl("login.logout")}">退出登录</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- 最近浏览开始 -->
+
+        <!-- 最近浏览结束 -->
+      </div>
+    </div>
+    <!-- 右侧结束 -->
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

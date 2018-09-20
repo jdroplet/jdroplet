@@ -1,0 +1,25 @@
+<#include "header" />
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/login.css" />
+  <!-- header end -->
+  <form id="reg-form">
+    <div class="eform">
+      <div class="tr puff"><input class="field" type="text" name="username" id="username" placeholder="设置用户名" /></div>
+      <div class="tr puff mt10"><input class="field" type="email" name="email" id="email" placeholder="设置邮箱" /></div>
+      <div class="tr puff mt10"><input class="field" type="password" name="password" id="password" placeholder="设置登录密码" /><i class="vineyebtn iconfont">&#xe66e;</i></div>
+      <div class="tr puff mt10"><input class="field" type="password" name="repassword" id="repassword" placeholder="确认登录密码" /><i class="vineyebtn iconfont">&#xe66e;</i></div>
+      <div class="captcha puff tr mt10" id="captcha">
+        <a class="fr"><img onclick="resetCaptcha(this)" src="/index.php?m=api&c=captcha&a=image" /></a>
+        <input class="field" type="text" placeholder="请输入图形验证码" />
+      </div>
+      <div class="slck mt10 cut">
+        <div class="fl c888 f14">同意用户注册协议</div>
+        <div class="fr"><input class="vswitch-1" name="agreement" id="agreement" type="checkbox" checked="checked" value="1" /><label for="agreement"></label></div>
+      </div>
+      <div class="submit mt20"><a href="javascript:void(0)" id="reg-btn">注 册</a></div>
+      <div class="mt20 center c999">已有账号？<a class="blue" href="/index.php?m=mobile&c=user&a=login">直接登录</a></div>
+    </div>
+  </form>
+</div>
+<script type="text/javascript" src="http://www.haimaoshitang.com:8090/public/script/stats.js"></script>
+</body>
+</html>

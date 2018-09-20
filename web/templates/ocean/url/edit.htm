@@ -1,0 +1,85 @@
+  <#include "header"/>
+  <#assign id = request.getIntParameter("id")>
+  <#assign pageId = request.getIntParameter("pageId")>
+  <#assign clusterId = request.getIntParameter("clusterId")>
+  <#if id == 0>
+    <#assign url = SiteManager.getUrlPattern(1)>
+  <#else>
+    <#assign url = SiteManager.getUrlPattern(id)>
+  </#if>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>URL设置<small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+
+        <li class="active"><#if id == 0>创建<#else>编辑</#if></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          ${ShowNotices()}
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <#if id == 0>
+              <h3 class="box-title">创建URL</h3>
+              <#else>
+              <h3 class="box-title">编辑URL</h3>
+              </#if>
+
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form name="votesection_form" role="form" action="${siteUrls.getUrl("url.recv", id)}?clusterId=${clusterId}&pageId=${pageId}" method="post">
+              <div class="box-body">
+
+                <div class="form-group">
+                  <label for="url_action">动作</label>
+                  <input type="text" class="form-control" id="url_action" name="action" placeholder="" value="${url.action!''}">
+                </div>
+
+                <div class="form-group">
+                  <label for="url_params">参数</label>
+                  <input type="text" class="form-control" id="url_params" name="params" placeholder="" value="${url.params!''}">
+                </div>
+                  
+                <div class="form-group">
+                  <label for="url_allows">允许的角色</label>
+                  <select class="form-control" id="url_allows" name="allows" multiple="multiple" size="4">
+                    <#assign roles = Roles.getRoles()>
+                    <#assign allows = url.allows?split(",")>
+                    <#list roles as role>
+                      <option value="${role.name}" ${allows?seq_contains(role.name)?string("selected=\"selected\"", "")}>${role.description}</option>
+                    </#list>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="url_desc">描述</label>
+                  <input type="text" class="form-control" id="url_desc" name="description" placeholder="" value="${url.description!''}">
+                </div>
+
+              </div>
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary">提交</button>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

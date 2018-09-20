@@ -1,0 +1,210 @@
+<#include "header"/>
+<#include "header_cart"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/order.css" />
+<script type="text/javascript" src="${themeUri}/dist/js/consignee.js"></script>
+<script type="text/javascript" src="${themeUri}/dist/js/order.js"></script>
+<script src="${themeUri}/dist/js/distpicker.min.js"></script>
+<script type="text/javascript">
+    var areaApi = "/index.php?m=api&c=area&a=children" , freightApi = "/index.php?m=api&c=order&a=freight";
+
+    $(function(){
+        var consigneeBox = $('#consignee-box');
+        //初始化运费
+        countFreight();
+        //初始化地区选择
+        getAreaSelect();
+        //当改变收件人触发
+        onChangeConsignee();
+        //当改变配送方式触发
+        onChangeShipping();
+        //新建收件人地址
+        $('#newadrbtn').on('click', function(){
+            $(this).hide();
+            consigneeBox.slideDown().find('span.vdsfielderr').remove();
+            consigneeBox.find('form input[name="id"]').val('');
+        });
+        //收件人表单保存按钮点击
+        consigneeBox.find('.consignee-btns button').eq(0).click(function(){
+            if(!checkConsigneeForm('consignee-form')) return false;
+            var form = consigneeBox.find('form'), saveBtn = $(this);
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: "/index.php?m=api&c=consignee&a=save",
+                data: form.serialize(),
+                beforeSend: function(){
+                    saveBtn.removeClass('sm-blue').addClass('sm-gray').text('正在保存...').prop('disabled', true);
+                },
+                success: function(res){
+                    saveBtn.removeClass('sm-gray').addClass('sm-blue').text('保 存').prop('disabled', false);
+                    if(res.status == 'success'){
+                        res.data.province = form.find('select[name="province"] option:selected').text();
+                        res.data.city = form.find('select[name="city"] option:selected').text();
+                        res.data.borough = form.find('select[name="borough"] option:selected').text();
+                        var $ul = $('#consignee-list'), $li = juicer($('#consignee-row-tpl').html(), res.data);
+                        if(consigneeBox.find('form input[name="id"]').val() != ''){
+                            $ul.find('li.cur').replaceWith($li);
+                        }else{
+                            $ul.find('li.cur').removeClass('cur').find('input[type="radio"]').prop('checked', false);
+                            $ul.prepend($li);
+                            onChangeConsignee();
+                        }
+                        hideConsigneeBox();
+                    }
+                }
+            });
+
+        });
+        //收件人表单取消按钮点击
+        consigneeBox.find('.consignee-btns button').eq(1).click(function(){
+            hideConsigneeBox();
+        });
+    });
+</script>
+<!-- 主体开始 -->
+<div class="container w1100 mt30">
+	<!-- 收件地址开始 -->
+	<div class="consignee cut">
+		<div class="th">
+			<h2>收件地址信息</h2>
+		</div>
+		<div class="selection module">
+			<ul id="consignee-list">
+				<#list contacts as ct>
+				<li class="cur" data-json="{&quot;id&quot;:&quot;1&quot;,&quot;user_id&quot;:&quot;1&quot;,&quot;receiver&quot;:&quot;\u5f20\u4e09&quot;,&quot;province&quot;:&quot;21&quot;,&quot;city&quot;:&quot;1&quot;,&quot;borough&quot;:&quot;4&quot;,&quot;address&quot;:&quot;\u6d77\u5bcc\u8def44\u53f7&quot;,&quot;zip&quot;:&quot;570203&quot;,&quot;mobile&quot;:&quot;18689549527&quot;,&quot;is_default&quot;:&quot;0&quot;}">
+					<span class="c999 fr"><a onclick="editConsignee(this)">编辑此地址</a></span>
+					<label>
+						<input class="mr5" type="radio" name="csn_id" value="1" ${ct.isDefault()?string("checked='checked'","")} />
+						<b class="mr10">${ct.userName}</b> ${ct.area} ${ct.address} <font class="c666 ml10">(联系电话：${ct.phone})</font>
+					</label>
+				</li>
+				</#list>
+			</ul>
+			<div class="add-btn"><button type="button" class="sm-blue" id="newadrbtn">+ 新建收件人地址</button></div>
+		</div>
+		<div class="consignee-form cut hide" id="consignee-box">
+			<form id="consignee-form">
+				<input type="hidden" name="id" value="" />
+				<dl><dt><label>收件人：</label></dt><dd><input name="receiver" type="text" class="w200 txt" /></dd></dl>
+				<dl>
+					<dt>收件地区：</dt>
+					<dd>
+						<div id="distpicker">
+							<select name="area" class="slt"></select>
+							<select name="area" class="slt"></select>
+							<select name="area" class="slt"></select>
+						</div>
+					</dd>
+				</dl>
+				<dl><dt>详细地址：</dt><dd><input name="address" id="address" type="text" class="w400 txt" /></dd></dl>
+				<dl><dt>邮政编码：</dt><dd><input name="zip" type="text" class="w100 txt" /></dd></dl>
+				<dl><dt>手机：</dt><dd><input name="mobile" type="text" class="w200 txt" /></dd></dl>
+				<div class="consignee-btns mt10"><button type="button" class="sm-blue">保 存</button><span class="sep"></span><button type="reset" class="sm-gray">取 消</button></div>
+			</form>
+		</div>
+	</div>
+	<!-- 收件地址结束 -->
+	<!-- 包裹清单开始 -->
+	<div class="parcel cart odmod mt10">
+		<div class="th cut">
+			<h2 class="fl">包裹清单</h2>
+			<div class="fr"><a title="返回购物车修改" href="/index.php?c=cart&a=index"><i class="icon"></i></a></div>
+		</div>
+		<div class="module">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<th colspan="2">商品</th>
+					<th width="130">价格(元)</th>
+					<th width="130">数量</th>
+					<th width="130">小计(元)</th>
+				</tr>
+				<#list car.items as item>
+				<#assign goods = item.object.goods>
+				<tr>
+					<td width="80"><a href="${siteUrls.getUrl("item.show", shopId, item.itemId)}" target="_blank"><img class="gim" src="" /></a></td>
+					<td>
+						<div class="aln-l">
+							<a href="${siteUrls.getUrl("item.show", shopId, item.itemId)}" target="_blank">${goods.name}</a>
+							<p class="opts c999 mt5">
+								<#if goods.propertyName1??>
+									<span class="mr5">[${goods.propertyName1}: <font>${item.object.property0}</font>]</span>
+								</#if>
+
+								<#if goods.propertyName2??>
+									<span class="mr5">[${goods.propertyName2}: <font>${item.object.property1}</font>]</span>
+								</#if>
+
+								<#if goods.propertyName3??>
+									<span class="mr5">[${goods.propertyName3}: <font>${item.object.property2}</font>]</span>
+								</#if>
+							</p>
+						</div>
+					</td>
+					<td><font class="unit-price">${item.object.fee}</font></td>
+					<td>${item.count}</td>
+					<td>${item.object.fee * item.count}</td>
+				</tr>
+				</#list>
+			</table>
+		</div>
+		<div class="parcel-form module">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="aln-r" width="70"><b>留言备注：</b></td>
+					<td class="aln-l"><textarea id="memos" cols="58" rows="3" placeholder="选填：内容不能超过240个字符"></textarea></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<!-- 包裹清单结束 -->
+	<!-- 配送方式开始 -->
+	<div class="odmod mt10 cut">
+		<div class="th"><h2>配送方式</h2></div>
+		<div class="selection module">
+			<ul id="shipping_list">
+				<li class="cur"><label><input checked="checked" class="mr5" type="radio" name="shipping_method" value="1" />普通快递</label><font class="ml10 c999">全国范围免邮</font></li>
+			</ul>
+		</div>
+	</div>
+	<!-- 配送方式结束 -->
+	<!-- 支付方式开始 -->
+	<div class="odmod mt10 cut">
+		<div class="th"><h2>支付方式</h2></div>
+		<div class="selection module">
+			<ul id="payment_list">
+				<li class="cur"><label><input checked="checked" class="mr5" type="radio" name="payment_method" value="3" />支付宝</label><font class="ml10 c999"></font></li>
+				<li><label><input class="mr5" type="radio" name="payment_method" value="1" />余额支付</label><font class="ml10 c999"></font></li>
+				<li><label><input class="mr5" type="radio" name="payment_method" value="2" />货到付款</label><font class="ml10 c999"></font></li>
+			</ul>
+		</div>
+	</div>
+	<!-- 支付方式结束 -->
+	<!-- 费用总计开始 -->
+	<div class="total mt10 cut">
+		<div class="th"><h2>订单合计</h2></div>
+		<div class="module mt10 cut">
+			<dl>
+				<dt>商品合计：</dt>
+				<dd><i>¥</i><font id="goods_amount">${totalFee}</font></dd>
+			</dl>
+			<dl>
+				<dt>运费合计：</dt>
+				<dd><i>¥</i><font id="shipping_amount">0.00</font></dd>
+			</dl>
+			<dl>
+				<dt>应付款金额总计：</dt>
+				<dd class="count"><i>¥</i><font id="order_amount">${totalFee}</font></dd>
+			</dl>
+		</div>
+	</div>
+	<!-- 费用总计结束 -->
+	<form method="post" id="order-form" action="/index.php?c=order&a=submit">
+		<input type="hidden" name="csn_id" data-error="请选择一个收件人地址！" />
+		<input type="hidden" name="shipping_id" data-error="请选择一个配送方式！" />
+		<input type="hidden" name="payment_id" data-error="请选择一个支付方式！" />
+		<input type="hidden" name="memos" />
+		<div class="aln-c mt20"><a class="checkout-btn" onclick="submitOrder()">确认并提交订单</a></div>
+	</form>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

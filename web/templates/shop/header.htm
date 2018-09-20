@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="jdroplet-baseurl" content="http://www.jdroplet.com">
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <title>jDroplet 商城系统 | 轻松开启电商之旅</title>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/general.css" />
+  <script type="text/javascript" src="${themeUri}/dist/js/jquery.js"></script>
+  <script type="text/javascript" src="${themeUri}/dist/js/general.js"></script>
+</head>
+<body>
+<!-- 顶部开始 -->
+<div class="topper">
+  <div class="w1100 x-auto">
+    <div class="topper-userbar fl" id="top-userbar">
+      <#if isLogin>
+        <a class="m"><i class="icon"></i>${user.displayName}</span><b class="icon"></b></a><font class="c999 ml10">欢迎您回来!</font>
+        <div class="m hide">
+          <div class="avatar fl">
+            <a href="${siteUrls.getUrl("user.my", shopId)}"><img width="60" height="60" href="/page.html?c=user&a=profile" src="${themeUri}/dist/images/noavatar_m.gif" /></a>
+          </div>
+          <ul>
+            <li><a href="${siteUrls.getUrl("user.my", shopId)}">进入用户中心</a></li>
+            <li><a href="${siteUrls.getUrl("user.profile", shopId)}">编辑资料</a></li>
+            <li><a href="${siteUrls.getUrl("login.logout")}">退出</a></li>
+          </ul>
+        </div>
+        <#else>
+          <font class="c666 mr20">欢迎来到 jDroplet 开源电商系统</font>
+          <a href="${siteUrls.getUrl("login.show", 1)}">登陆</a>
+          <span class="sep">|</span>
+          <a href="${siteUrls.getUrl("login.show", 1)}" class="red">免费注册</a>
+      </#if>
+    </div>
+    <div class="topper-links fr">
+      <a href="${siteUrls.getUrl("user.orders", shopId, 1)}" target="_blank">我的订单</a><span class="sep">|</span>
+      <a href=""  target="_blank">收藏夹</a><span class="sep">|</span>
+    </div>
+  </div>
+</div>
+<!-- 顶部结束 -->

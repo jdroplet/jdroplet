@@ -1,0 +1,15 @@
+<div class="am-container header">
+    <ul class="message-l">
+
+    </ul>
+    <ul class="message-r">
+
+        <div class="topMessage my-shangcheng">
+            <#if isLogin>
+            <div class="menu-hd MyShangcheng"><a href="${siteUrls.getUrl("user.my", shopId)}" target="_top"><i class="am-icon-user am-icon-fw"></i>个人中心</a></div>
+            <#else>
+            <div class="menu-hd MyShangcheng"><a href="${siteUrls.getUrl("login.show", shopId)}" target="_top"><i class="am-icon-user am-icon-fw"></i>个人中心</a></div>
+            </#if>
+        </div>
+    </ul>
+</div>

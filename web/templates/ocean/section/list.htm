@@ -1,0 +1,96 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <#if parent??>
+          分类列表
+        <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("section.edit", parent.id)}"><i class="fa fa-edit"></i>编辑</a>
+        <a class="btn btn-info btn-xs" href="${siteUrls.getUrl("section.edit", 0)}?shopId=${shopId}&parentId=${parentId}&type=${parent.type}"><i class="fa fa-plus"></i> 添加子分类</a>
+        <#else>
+          分类列表
+        <small><a class="btn btn-block btn-info btn-xs" href="${siteUrls.getUrl("section.edit", 0)}?shopId=${shopId}&parentId=${parentId}&type=${type}"><i class="fa fa-plus"></i> 新建一级分类</a></small>
+        </#if>
+      </h1>
+
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li class="active"><a href="${siteUrls.getUrl("section.list", pageIndex)}"> 所有分类</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"><#if parent??>${parent.name} 子分类<#else>分类</#if></h3>
+
+          <div class="box-tools pull-right">
+            <#assign shops = Shops.getShops("", loggedin_user.id, 1, 99).objects >
+            <form method="get" action="${siteUrls.getUrl("section.list", pageIndex)}">
+            <select class="form-control" name="shopId" onchange="submit()">
+              <option value="0">--选择一个店铺--</option>
+              <#list shops as shop>
+              <option value="${shop.id}" ${(shop.id == shopId)?string("selected='selected'", "")}>${shop.name}</option>
+              </#list>
+            </select>
+            </form>
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>名称</th>
+              <th>slug</th>
+              <th>类型</th>
+              <th>创建者</th>
+              <th>创建时间</th>
+              <th>编辑</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#assign sections = datas.objects>
+            <#assign pageCount = datas.totalRecords / pageSize>
+            <#assign dataCmm = datas.totalRecords % pageSize>
+            <#if dataCmm != 0>
+                <#assign pageCount= pageCount+ 1>
+            </#if>
+            <#list sections as section>
+            <tr>
+              <td>${section.id}</td>
+              <td>
+                <a href="${siteUrls.getUrl("section.list", 1)}?shopId=${section.shopId}&parentId=${section.id}">${section.name}</a>
+              </td>
+              <td>${section.slug}</td>
+              <td><a class="badge bg-red" href="${siteUrls.getUrl("section.list", 1)}?shopId=${section.shopId}&parentId=0&type=${section.type}">${section.type}</a></td>
+              <td>${Users.getUser(section.userId).displayName}</td>
+              <td>${section.dateCreated?datetime}</td>
+              <td>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("section.edit", section.id)}"><i class="fa fa-edit"></i>编辑</a>
+                <a class="btn btn-primary btn-xs" href="${siteUrls.getUrl("section.atts", section.id)}"><i class="fa fa-edit"></i>属性</a>
+              </td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("section.list") />
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

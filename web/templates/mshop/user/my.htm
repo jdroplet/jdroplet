@@ -1,0 +1,75 @@
+<#include "header" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/user.css" />
+  <script type="text/javascript">
+      $(function(){
+          $('#order-pending a').each(function(i, e){
+              $.getJSON("//www.jdroplet.com/mall/order/count.api", {status:$(e).data('status'), type:'goods'}, function(res){
+                  if(res.status == '0' && res.data > 0) $(e).find('em').text(res.data).show();
+              });
+          });
+          viewCartbar();
+          preserveSpace('footnav');
+      });
+
+      function logout(){
+          $.vdsConfirm({
+              content:'您确定要登出吗?',
+              ok: function(){
+                  window.location.href = "/index.php?m=mobile&c=user&a=logout";
+              }
+          });
+      }
+  </script>
+  <div class="wrapper">
+    <!-- header start -->
+    <div class="header">
+      <div class="op lt"><a href="${siteUrls.getUrl("main.index", shopId)}"><i class="f20 iconfont">&#xe602;</i></a></div>
+      <h2>个人中心</h2>
+    </div>
+    <!-- header end -->
+    <div class="topinfo">
+      <div class="module xauto cut">
+        <div class="avatar fl"><a href="${siteUrls.getUrl("user.profile", shopId)}"><img src="${user.avatar}" /></h3></div>
+        <div class="info">
+          <dl>
+            <dd class="mt5"><font class="f14">${user.displayName}</font><span class="ml10 dim">初级会员</span></dd>
+            <dd class="mt5">
+              <font class="dim">账户余额：</font><b>0.00 元</b>
+              <span class="sep5"></span>
+              <font class="dim">积分：</font><b>0</b>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <div class="menus cut">
+        <ul>
+          <li><a href=""><i class="iconfont">&#xe60a;</i><p>商品收藏</p></a></li>
+          <li><a href=""><i class="iconfont">&#xe613;</i><p>我的足迹</p></a></li>
+          <li><a href="${siteUrls.getUrl("user.contacts", shopId)}"><i class="iconfont">&#xe625;</i><p>收件地址</p></a></li>
+          <li><a href=""><i class="iconfont">&#xe622;</i><p>我的评价</p></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="columns module mt10 cut">
+      <div class="order">
+        <div class="th"><a class="fr" href="${siteUrls.getUrl("user.orders", shopId, 1)}">查看全部订单<i class="iconfont">&#xe614;</i></a><i class="icon"></i><font class="f14">我的订单</font></div>
+        <div class="menus cut" id="order-pending">
+          <a data-status="1" href="${siteUrls.getUrl("user.orders", shopId, 1)}?status=1"><i class="iconfont">&#xe624;</i><p>待付款</p><em>0</em></a>
+          <a data-status="4" href="${siteUrls.getUrl("user.orders", shopId, 1)}?status=4"><i class="iconfont">&#xe623;</i><p>待发货</p><em>0</em></a>
+          <a data-status="5" href="${siteUrls.getUrl("user.orders", shopId, 1)}?status=5"><i class="iconfont">&#xe627;</i><p>待签收</p><em>0</em></a>
+          <a data-status="9" href="${siteUrls.getUrl("user.orders", shopId, 1)}?status=9"><i class="iconfont">&#xe62c;</i><p>待评价</p><em>0</em></a>
+        </div>
+      </div>
+      <a class="urinfo row" href="${siteUrls.getUrl("user.profile", shopId)}">
+        <span class="fl"><i class="iconfont">&#xe636;</i><font class="f14">个人设置</font></span>
+        <span class="fr"><i class="iconfont">&#xe614;</i></span>
+      </a>
+      <a class="logout row" onclick="logout()">
+        <span class="fl"><i class="iconfont">&#xe63d;</i><font class="f14">退出登录</font></span>
+      </a>
+    </div>
+  </div>
+  <#assign tab = "user"/>
+  <#include "footer_nav"/>
+</body>
+</html>

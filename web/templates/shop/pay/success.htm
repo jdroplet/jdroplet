@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>付款成功页面</title>
+    <link href="${themeUri}/dist/amaze-ui/assets/css/amazeui.css" rel="stylesheet" type="text/css" />
+    <link href="${themeUri}/dist/amaze-ui/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="${themeUri}/dist/basic/css/demo.css" rel="stylesheet" type="text/css" />
+
+    <link href="${themeUri}/dist/css/sustyle.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="${themeUri}/dist/basic/js/jquery-1.7.min.js"></script>
+
+</head>
+
+<body>
+
+
+<!--顶部导航条 -->
+<#include "top_nav2"/>
+
+<!--悬浮搜索框-->
+
+<div class="nav white">
+    <div class="logo"><img src="${themeUri}/dist/images/logo.png" /></div>
+    <div class="logoBig">
+        <li><img src="${themeUri}/dist/images/logobig.png" /></li>
+    </div>
+
+    <div class="search-bar pr">
+        <a name="index_none_header_sysc" href="#"></a>
+        <form>
+            <input id="searchInput" name="index_none_header_sysc" type="text" placeholder="搜索" autocomplete="off">
+            <input id="ai-topsearch" class="submit" value="搜索" index="1" type="submit"></form>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+
+
+<div class="take-delivery">
+    <div class="status">
+        <h2>您已成功付款</h2>
+        <div class="successInfo">
+
+            <div class="option">
+                <span class="info">您可以</span>
+                <a href="${siteUrls.getUrl("user.orders",shopId,1)}" class="J_MakePoint">查看<span>已买到的商品</span></a>
+                <a href="${siteUrls.getUrl("user.orders",shopId,1)}" class="J_MakePoint">查看<span>交易详情</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<#include "sidebar_footer"/>
+
+
+</body>
+</html>

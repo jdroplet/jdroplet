@@ -1,0 +1,80 @@
+<#function sub_nav_actived _page, _action>
+  <#local _cur_page = request.getParameter("_page")>
+  <#local _cur_action = request.getParameter("_action")>
+
+  <#if _cur_page == _page && _action == _cur_action>
+    <#return "active">
+  <#else>
+    <#return "">
+  </#if>
+</#function>
+
+<#function main_nav_actived group>
+  <#local groups = Templates.getManageMenuNavGroup()>
+
+  <#local cur_page = request.getParameter("_page")>
+
+  <#if groups[cur_page] == group>
+    <#return "active">
+  <#else>
+    <#return "">
+  </#if>
+</#function>
+
+  <!-- Left side column. contains the sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img class="img-circle" alt="${loggedin_user.displayName}" src="${themeUri}/dist/images/avatar.png">
+        </div>
+        <div class="pull-left info">
+          <p>${loggedin_user.displayName}</p>
+          <a href="javascript:;"><i class="fa fa-circle text-success"></i> 在线</a>
+        </div>
+      </div>
+      <!-- search form -->
+      <form method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="wd" class="form-control" placeholder="搜索">
+          <span class="input-group-btn">
+            <button type="submit" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+
+        <li class="header">主菜单</li>
+
+        <#assign menus = Templates.getManageMenus()>
+
+        <#list menus as menu>
+            <li class="treeview ${menu.isAtive()?string("active","")}">
+              <a href="${menu.url}">
+                <i class="fa ${menu.icon}"></i><span>${menu.name}</span>
+                <#if (menu.subMenus.keySet()?size > 0)>
+                <i class="fa fa-angle-left pull-right"></i>
+                </#if>
+              </a>
+
+              <#if (menu.subMenus.keySet()?size > 0)>
+              <ul class="treeview-menu">
+                <#list menu.subMenus.keySet() as subKey>
+                <#assign subMenu = menu.subMenus[subKey]>
+                <li class="${subMenu.isAtive()?string("active","")}"><a href="${subMenu.url}"><i class="fa ${subMenu.icon}"></i> ${subMenu.name}</a></li>
+                </#list>
+              </ul>
+              </#if>
+
+            </li>
+        </#list>
+
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>

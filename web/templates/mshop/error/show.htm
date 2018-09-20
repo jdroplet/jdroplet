@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta name="verydows-baseurl" content="http://www.haimaoshitang.com:8090"><title>支付订单 - Verydows 开源电商系统</title>
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/general.css" />
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/iconfont/iconfont.css">
+  <link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/pay.css" />
+  <script type="text/javascript" src="${themeUri}/dist/js/zepto.min.js"></script>
+  <script type="text/javascript" src="${themeUri}/dist/js/verydows.mobile.js"></script>
+</head>
+<body>
+<div class="wrapper">
+  <!-- header start -->
+  <div class="header">
+    <div class="op lt"><a href="javascript:history.go(-1)"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>支付订单</h2>
+  </div>
+  <!-- header end -->
+  <div class="pay">
+    <h1 class="c666">oops ~ 出错了</h1>
+    <h3 class="mt20 error"><#if message??>${message}</#if></h3>
+    <p class="mt20">
+      <#list links as link>
+        <a href="${link.link}">${link.title}</a>
+      </#list>
+    </p>
+  </div>
+</div>
+<script type="text/javascript" src="http://www.haimaoshitang.com:8090/public/script/stats.js"></script>
+</body>
+</html>

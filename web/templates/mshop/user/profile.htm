@@ -1,0 +1,39 @@
+<#include "header" />
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/info.css" />
+<div class="wrapper">
+  <div class="header">
+    <div class="op lt"><a href="${siteUrls.getUrl("user.my", shopId)}"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>个人信息</h2>
+  </div>
+  <div class="srow cut">
+    <a class="avatar" href="">
+      <h3 class="fl">头像</h3>
+      <i class="fr iconfont">&#xe66f;</i>
+      <span class="fr"><img src="${user.avatar}" /></span>
+    </a>
+    <a href="">
+      <h3 class="fl">昵称</h3>
+      <i class="fr iconfont">&#xe66f;</i>
+      <span class="fr"><font class="noset">${user.displayName}</font></span>
+    </a>
+  </div>
+  <div class="srow mt10 cut">
+    <a href="">
+      <h3 class="fl">邮箱</h3>
+      <i class="fr iconfont">&#xe66f;</i>
+      <span class="fr">${user.email}</span>
+    </a>
+    <a href="">
+      <h3 class="fl">手机</h3>
+      <i class="fr iconfont">&#xe66f;</i>
+      <span class="fr"><font class="noset">${user.phone}</font></span>
+    </a>
+    <a href="">
+      <h3 class="fl">性别</h3>
+      <i class="fr iconfont">&#xe66f;</i>
+      <span class="fr">${user.gender}</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>

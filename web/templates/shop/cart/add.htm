@@ -1,0 +1,22 @@
+<#include "header"/>
+<#include "header_cart"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/order.css"/>
+<!-- 主体开始 -->
+<div class="container w1100 mt30">
+  <div class="module cut" id="cart">
+    <div class="cart">
+      <div class="success-top"><b class="succ-icon"></b>
+        <h3 class="ftx-02">商品已成功加入购物车！</h3>
+      </div>
+    </div>
+    <div class="module mt15 cut">
+      <div class="cart-bill fr cut">
+        <div class="aln-r mt20">
+          <a class="normal-btn blue radius4" id="checkout-btn" href="${siteUrls.getUrl("item.show", goods.shopId, goods.id)}">查看商品详情</a>
+          <a class="checkout-btn radius4" id="checkout-btn" href="${siteUrls.getUrl("cart.show", 1)}">去购物车结算</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

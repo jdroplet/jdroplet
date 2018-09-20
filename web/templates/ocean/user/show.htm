@@ -1,0 +1,76 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>用户列表<small><a class="btn btn-info btn-sm" href="${siteUrls.getUrl("user.edit", 0)}">添加新用户</a></small></h1>
+      <ol class="breadcrumb">
+        
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          
+          <div class="row">
+        <#assign pageIndex = request.getIntParameter("page_index")>
+        <#assign term = request.getParameter("wd")!"">
+
+        <#assign datas = Searchs.searchUser(term)>
+        <#assign users = datas.objects>
+        <#assign pageCount = datas.totalRecords / pageSize>
+        <#assign dataCmm = datas.totalRecords % pageSize>
+        <#if dataCmm != 0>
+            <#assign pageCount= pageCount+ 1>
+        </#if>
+
+        <#list users as user>
+          <div class="col-md-4">
+            <!-- Widget: user widget style 1 -->
+            <div class="box box-widget widget-user-2">
+              <div class="box-tools pull-right">
+                <a class="btn btn-box-tool" href="${siteUrls.getUrl("user.edit", user.id)}"><i class="fa fa-wrench"></i></a>
+              </div>
+              <div class="widget-user-header bg-yellow">
+                <div class="widget-user-image">
+                  <img class="img-circle" src="http://tx.ui.com/logo/${user.userId?string("#")}" alt="${user.username}">
+                </div>
+                <!-- /.widget-user-image -->
+                <h3 class="widget-user-username">${user.nicename}</h3>
+                <h5 class="widget-user-desc">
+                  <#assign roles = Roles.getRoles(user.id)>
+                  ${roles[0].description}  <br/>
+                </h5>
+              </div>
+              <div class="box-footer no-padding">
+                <ul class="nav nav-stacked">
+                  
+                </ul>
+              </div>
+            </div>
+            <!-- /.widget-user -->
+          </div>
+            </#list>
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.box-body -->
+
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("user.show") /> 
+        </div>
+
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

@@ -1,0 +1,65 @@
+  <#include "header"/>
+  <#assign id = request.getIntParameter("id")>
+  <#assign cluster = SiteManager.getCluster(id)>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>集群设置<small>简单好用</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${siteUrls.getUrl("manage.show")}"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="${siteUrls.getUrl("cluster.list",1)}">集群列表</a></li>
+        <li class="active"><#if id == 0>创建<#else>编辑:${cluster.name}</#if></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+          ${ShowNotices()}
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <#if id == 0>
+              <h3 class="box-title">创建集群</h3>
+              <#else>
+              <h3 class="box-title">编辑集群：${cluster.name}</h3>
+              </#if>
+
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form name="cluster_form" role="form" action="${siteUrls.getUrl("cluster.recv", cluster.id)}" method="post">
+	            <div class="box-body">
+                    <div class="form-group">
+	                  <label for="cluster_name">集群名称</label>
+	                  <input type="text" class="form-control" id="cluster_name" name="name" placeholder="请输开放平台名称" value="${cluster.name!''}">
+	                </div>
+
+                    <div class="form-group">
+                      <label for="EnableWechatUnauthorizeLogin">启用微信静默登录</label>
+                      <div class="switch" data-on="danger" data-off="primary">
+                        <input type="checkbox" id="EnableWechatUnauthorizeLogin" name="EnableWechatUnauthorizeLogin" ${cluster.getBool("EnableWechatUnauthorizeLogin")?string("checked","")} value="true"/>
+                      </div>
+                    </div>
+	             </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary">提交</button>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

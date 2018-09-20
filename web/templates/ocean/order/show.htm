@@ -1,0 +1,80 @@
+  <#import "macropager_show" as macro/>
+  <#include "header"/>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>订单详情 <small class="label bg-red"><i class="fa fa-filter"></i> <#switch order.status><#case 1>提交订单<#break><#case 3>提交<#break><#case 4>已支付<#break></#switch></small></h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="callout callout-info">
+            <h4>收货人信息</h4>
+
+            <p>收货人： ${contact.userName}</p>
+            <p>地址： ${contact.area} ${contact.address}</p>
+            <p>手机号码： ${contact.phone}</p>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="callout callout-info">
+            <h4>配送信息</h4>
+
+            <p>配送方式： 普通快递</p>
+            <p>运费： 10</p>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="callout callout-info">
+            <h4>付款方式</h4>
+
+            <p>付款金额： ${order.fee}</p>
+            <p>付款方式： ${order.platform}</p>
+            <p>付款时间： ${order.payTime?datetime}</p>
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">${shop.name} 订单</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="tb_pages" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>购买商品</th>
+              <th>商品编号</th>
+              <th>价格</th>
+              <th>数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <#list items as item>
+            <tr>
+              <td><img src="${item.icon}" class="img-thumbnail"/> ${item.name}</td>
+              <td>${item.productId} - ${item.specId}</td>
+              <td>${item.price}</td>
+              <td>${item.quantity}</td>
+            </tr>
+            </#list>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+        <!-- /.user search form -->
+        <@macro.pager pageIndex, pageCount, siteUrls.getUrl("order.list") + "?shopId=" + shopId + "&type=" + type + "&status=" + status />
+        </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <#include "footer"/>

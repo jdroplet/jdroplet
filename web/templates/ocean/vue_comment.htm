@@ -1,0 +1,46 @@
+<el-dialog :visible.sync="isShowMediaLibDlg" width="80%">
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab">图库</a></li>
+            <li><a href="#tab_2" data-toggle="tab">上传</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+                <div class="row thumbnails">
+                    <div class="col-xs-6 col-md-3" v-for="(att, index) in atts">
+                        <a href="javascript:;" :class="{'thumbnail':true,'active':att.selected == 1}" @click="onImgSelected(index)">
+                            <span v-if="att.selected == 1" style="position: absolute; right: 20px;"><i class="fa fa-check"></i></span>
+                            <img :src="att.img_url" :alt="att.filename">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="tab_2">
+                <form role="form">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label >滑动放大缩小图片</label>
+                            <input type="range" @input="onSliderChange" :min="sliderMin" :max="sliderMax" step=".001" v-model="sliderVal"><br/>
+                            <croppa v-model="croppa" placeholder="选择图片" :width="320" :height="240" @new-image-drawn="onNewImage"
+                                    accept=".jpeg,.png,.jpg" @file-choose="isShowUploadBtn=true"
+                                    @zoom="onZoom"></croppa>
+                        </div>
+                    </div>
+                    <div class="box-footer" v-if="isShowUploadBtn">
+                        <button type="button" class="btn" @click="upload">上传图片</button>
+                    </div>
+                    <!-- /.box-body -->
+                </form>
+            </div>
+            <!-- /.tab-pane -->
+
+        </div>
+        <!-- /.tab-content -->
+    </div>
+
+    <span slot="footer" class="dialog-footer">
+            <el-button @click="isShowMediaLibDlg = false">关 闭</el-button>
+            <el-button @click="onMediaSelected" type="primary">确 定</el-button>
+        </span>
+</el-dialog>

@@ -1,0 +1,84 @@
+<#import "macros/pager_show" as macro/>
+<#include "header"/>
+
+<script type="text/javascript">
+  function cancelOrder(e, url){
+      $(e).vdsConfirm({
+          text: '您确定要取消该订单吗?',
+          top: -25,
+          ok: function(){
+              //window.location.href = url + "?redirect=" + encodeURIComponent(window.location.href);
+              $.getJSON(url, {}, function(res){
+                  if(res.status == 0){
+                      $.vdsPopDialog({text: '成功取消订单', callback:function(){window.location.reload()}});
+                  } else {
+                      $.vdsPopDialog({type: 'err', text: res.msg});
+                  }
+              });
+          },
+      });
+  }
+</script>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+  <div class="module cut">
+    <!-- 左侧开始 -->
+    <#include "user/side_bar"/>
+    <!-- 左侧结束 -->
+    <!-- 右侧开始 -->
+    <div class="w910 cut">
+      <div class="mcter">
+        <h2>我的订单</h2>
+        <div class="order cut">
+          <#list datas.objects as order>
+          <div class="tli cut">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <th colspan="4">
+                  <div class="fl aln-l cut">订单号：<b>${order.orderId}</b><span class="sep"></span>下单日期：<b>${order.createTime?datetime}</b></div>
+                  <div class="fr"><a href="${siteUrls.getUrl("user.order", shopId, order.orderId)}">订单详情</a></div>
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <#list order.items as item>
+                  <dl>
+                    <dt><a href="${siteUrls.getUrl("item.show", item.shopId, item.productId)}" target="_blank"><img class="gim" src="${attaPath}${item.icon}" /></a></dt>
+                    <dd>
+                      <p><a href="${siteUrls.getUrl("item.show", item.shopId, item.productId)}" target="_blank">${item.name}</a></p>
+                      <p class="mt5"><span class="c999 mr5">单价：</span><font class="cny">¥</font> ${item.price}</p>
+                      <p class="mt5"><span class="c999 mr5">数量：</span>${item.quantity}</p>
+                    </dd>
+                  </dl>
+                  </#list>
+                </td>
+                <td width="120"><p><font class="cny">¥</font> ${order.payAmount}</p><p class="mt5 c999">(含运费：<font class="cny">¥</font> ${order.shippingAmount})</p></td>
+                <td width="120"><#switch order.status><#case 0>已取消<#break><#case 1>提交订单<#break><#case 4>已支付<#break></#switch></td>
+                <td width="120">
+                  <#switch order.status>
+                    <#case 0><p><a class="sm-blue btn" href="${siteUrls.getUrl("item.show", item.shopId, item.productId)}">重新购买</a></p><#break>
+                    <#case 1>
+                      <p><a class="sm-red btn" href="${siteUrls.getUrl("pay.show", order.orderId)}">立即付款</a></p>
+                      <p class="mt10"><a type="button" class="sm-gray btn" onclick="cancelOrder(this, '${siteUrls.getUrl("order.cancel", order.orderId)}')">取消订单</a></p>
+                    <#break>
+                    <#case 4>
+                      <p><a class="sm-blue btn" href="${siteUrls.getUrl("user.order", shopId, order.orderId)}">查看</a></p>
+                    <#break>
+                    <#case 5>
+                      <p><a class="sm-red btn" href="/index.php?c=order&a=delivered&id=947900000702982">签收</a></p>
+                    <#break>
+                  </#switch>
+                </td>
+              </tr>
+            </table>
+          </div>
+          </#list>
+        </div>
+        <@macro.pager pageIndex, pageSize, datas.totalRecords, Formater(siteUrls.getUrl("user.orders"), shopId)?replace("{1}","{0}")/>
+      </div>
+    </div>
+    <!-- 右侧结束 -->
+  </div>
+</div>
+<!-- 主体结束 -->
+<#include "footer"/>

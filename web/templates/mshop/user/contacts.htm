@@ -1,0 +1,85 @@
+<#include "header" />
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/user.css" />
+<script type="text/javascript">
+    $(function(){
+        $('#consignees dl dd.l i').click(function(){
+            var cur = $(this).closest('dl').addClass('checked');
+            if(cur.find('p.isdef').size() > 0){
+                $('#setdefbtn').hide();
+            }else{
+                $('#setdefbtn').show();
+            }
+            $('#popact').height(Math.max($(document).height(), $(window).height())).show().on('click', function(){
+                $(this).hide();
+                $('#consignees dl.checked').removeClass('checked');
+            });
+        });
+    });
+
+    function setDefaulted(){
+        var selected = $('#consignees dl.checked');
+        $.asynInter("/index.php?m=api&c=consignee&a=defaulted", {id:selected.data('key')}, function(res){
+            if(res.status == 'success'){
+                $('#consignees p.isdef').remove();
+                selected.find('dd.m').append('<p class="isdef mt5 red">[默认地址]</p>');
+            }else{
+                $.vdsPrompt({content:res.msg});
+            }
+        });
+    }
+
+    function delConsignee(){
+        var container = $('#consignees'), selected = container.find('dl.checked');
+        $.asynInter("/de;ete", {id:selected.data('key')}, function(res){
+            if(res.status == 'success'){
+                selected.remove();
+                if(container.find('dl').size() == 0){
+                    container.html($('#nodata-tpl').html());
+                }else{
+                    var saved = container.find('div.total b').eq(0), remaining = container.find('div.total b').eq(1);
+                    saved.text(parseInt(saved.text()) - 1);
+                    remaining.text(parseInt(remaining.text()) + 1);
+                }
+            }else{
+                $.vdsPrompt({content:res.msg});
+            }
+        });
+    }
+</script>
+<div class="wrapper">
+  <!-- header start -->
+  <div class="header">
+    <div class="op lt"><a href="${siteUrls.getUrl("user.my", shopId)}"><i class="f20 iconfont">&#xe602;</i></a></div>
+    <h2>收件地址</h2>
+    <div class="op rt"><a href="${siteUrls.getUrl("user.editcontact", shopId, 0)}"><i class="f18 iconfont">&#xe63e;</i></a></div>
+  </div>
+  <!-- header end -->
+  <div class="csgli" id="consignees">
+    <div class="total">您已保存了<b>${contacts?size}</b>条收件人地址，还能再保存<b>${5 - contacts?size}</b>条</div>
+    <#list contacts as ct>
+    <dl data-key="${ct.id}">
+      <dd class="l"><i class="iconfont">&#xe61a;</i></dd>
+      <dd class="r"><a href="${siteUrls.getUrl("user.editcontact", shopId, ct.id)}"><i class="iconfont">&#xe617;</i></a></dd>
+      <dd class="m">
+        <h4 class="c666">${ct.userName}<span class="ml10">${ct.phone}</span></h4>
+        <p class="mt5 c888">${ct.area} ${ct.address}<br />${ct.code}</p>
+        <#if ct.isDefault()><p class="isdef mt5 red">[默认地址]</p></#if>
+      </dd>
+    </dl>
+    </#list>
+  </div>
+</div>
+<div class="popact hide" id="popact">
+  <div class="fixed">
+    <a class="b1" id="setdefbtn" onclick="setDefaulted()">设为默认</a>
+    <a onClick="delConsignee()">删 除</a>
+  </div>
+</div>
+<script type="text/template" id="nodata-tpl">
+  <div class="nodata">
+    <div class="th"><span><i class="iconfont">&#xe625;</i></span><div class="line"></div></div>
+    <p>暂无任何收件人地址</p>
+  </div>
+</script>
+</body>
+</html>

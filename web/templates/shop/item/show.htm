@@ -1,0 +1,276 @@
+<#include "header"/>
+<#include "header_normal"/>
+<link rel="stylesheet" type="text/css" href="${themeUri}/dist/css/goods.css"/>
+<script type="text/javascript" src="${themeUri}/dist/js/jquery.zoom.min.js"></script>
+<script type="text/javascript" src="${themeUri}/dist/js/goods.js"></script>
+<script type="text/javascript">
+    var shopId = ${shopId};
+    var goodsId = ${goods.id};
+    var goodsSpecs = ${goodsSpecs};
+
+    $(function(){
+        showReviewList(1);
+        $('#contabs li').eq(2).on('click', function(){
+            var container = $('#rating-satis'), move = parseFloat(container.find('dt').text()) * 100 - 14;
+            container.animate({'padding-left': move}, 1000);
+        });
+    });
+
+    function addFavorite(id){
+        $.getJSON("api/favorite/add", {goods_id:id}, function(res){
+            if(res.status == 'success'){
+                $.vdsPopDialog({text: '加入收藏夹成功'});
+            }else if(res.status == 'unlogined'){
+                popLoginbar();
+            }else{
+                $.vdsPopDialog({type: 'err', text: '加入收藏夹失败'});
+            }
+        });
+    }
+
+    function showReviewList(page_id) {
+    }
+
+    function reviewPageTurn(page_id){showReviewList(page_id);}
+    function reviewPageJump(e){showReviewList($(e).prev('input').val())}
+</script>
+<!-- 主体开始 -->
+<div class="container w1100 mt10">
+	<div class="gtds cut">
+		<div class="gimbox fl">
+			<!-- 商品图片开始 -->
+			<div class="module">
+				<div class="im cut">
+					<div id="goods-imgarea"><img src="${attaPath}/${goods.pics[0]}" /></div>
+					<ul class="hide" id="goods-imgsrc">
+						<#list goods.pics as pic>
+						<li data-zoom="${pic}"><img src="${attaPath}/${pic}" /></li>
+						</#list>
+					</ul>
+					<i class="zoom icon"></i> </div>
+				<div class="tmb mt10 cut">
+					<a class="tmb-arrow lh disabled" id="tmb-back-btn"><i class="icon">&lt;</i></a>
+					<div class="tmb-im cut">
+						<div class="module cut" id="thumb-container">
+							<#list goods.pics as pic>
+								<a <#if pic_index == 0>class="cur"</#if>><img alt="${goods.name}" src="${attaPath}/${pic}" /></a>
+							</#list>
+						</div>
+					</div>
+					<a class="tmb-arrow rh disabled" id="tmb-forward-btn"><i class="icon">&gt;</i></a>
+				</div>
+			</div>
+			<!-- 商品图片结束 -->
+			<div class="social mt20"><a onclick="addFavorite(20)"><i class="favor icon"></i><font>收藏</font></a></div>
+		</div>
+		<div class="gtbox cut">
+			<h1>${goods.name}</h1>
+			<p class="mt8 c888"><p style="color: rgb(228, 57, 60); line-height:150%">${goods.excerpt}</p></p>
+			<div class="gatt module mt10 cut">
+				<dl>
+					<dt>商品货号:</dt>
+					<dd>00100219953</dd>
+				</dl>
+				<dl class="mt5">
+					<dt>售价:</dt>
+					<dd class="npri"><i>¥</i><font id="nowprice" data-price="<#if goodsSpec??>${(goodsSpec.price/100)?string("#.##")}<#else>${(goods.salePrice/100)?string("#.##")}</#if>"><#if goodsSpec??>${(goodsSpec.price/100)?string("#.##")}<#else>${(goods.salePrice/100)?string("#.##")}</#if></font></dd>
+				</dl>
+			</div>
+			<div class="cutline mt10"></div>
+			<div class="gatt module">
+				<#if goods.propertyName1??>
+				<dl class="mt15">
+					<dt>${goods.propertyName1}</dt>
+					<dd class="opt" data-checked="1">
+						<#list properties1 as pp1>
+						<a class="${(curSpec1 == pp1.id)?string("cur","")}" data-id="${pp1.id}">${pp1.name}<i class="icon"></i></a>
+						</#list>
+						</dd>
+				</dl>
+				</#if>
+
+				<#if goods.propertyName2??>
+				<dl class="mt15">
+					<dt>${goods.propertyName2}</dt>
+					<dd class="opt" data-checked="1">
+					<#list properties2 as pp2>
+						<a class="${(curSpec2 == pp2.id)?string("cur","")}" data-id="${pp2.id}">${pp2.name}<i class="icon"></i></a>
+					</#list>
+					</dd>
+				</dl>
+				</#if>
+
+				<#if goods.propertyName3??>
+				<dl class="mt15">
+					<dt>${goods.propertyName3}</dt>
+					<dd class="opt" data-checked="1">
+					<#list properties3 as pp3>
+						<a class="${(curSpec3 == pp3.id)?string("cur","")}" data-id="${pp3.id}">${pp3.name}<i class="icon"></i></a>
+					</#list>
+					</dd>
+				</dl>
+				</#if>
+
+				<form method="post" action="/cart/index.html" id="buy-form">
+					<dl class="mt15">
+						<dt>购买数量:</dt>
+						<dd class="qty" id="buy-qty">
+							<button type="button">-</button><input name="qty" class="aln-c" type="text" value="1" data-stock="9970" /><button type="button">+</button>
+							<font class="c999 ml5">件</font>
+						</dd>
+					</dl>
+				</form>
+			</div>
+			<div class="buy mt30"><a class="add-cart icon" href="${cartLink}?count=1">加入购物车</a><a class="buy-now icon" onclick="toBuy('20', 'cart/index.html')">立即购买</a></div>
+		</div>
+	</div>
+	<div class="module mt10 cut">
+		<!-- 左边开始 -->
+		<div class="w210 fl cut">
+			<div class="sli mb10">
+				<h2>热销榜</h2>
+				<#list hots as goods>
+				<dl>
+					<dt><a href="${siteUrls.getUrl("item.show", shopId, goods.id)}"><img alt="${goods.name}" src="${attaPath}${goods.pics[0]}" /></a></dt>
+					<dd class="lt mt5">
+						<a title="${goods.name}" href="${siteUrls.getUrl("item.show", shopId, goods.id)}">${goods.name}</a>
+						<p><i>¥</i>${goods.salePrice/100}</p>
+					</dd>
+				</dl>
+				</#list>
+			</div>
+		</div>
+		<!-- 左边结束 -->
+		<!-- 详情开始 -->
+		<div class="details cut">
+			<div class="tabs cut">
+				<ul id="contabs">
+					<li class="cur">商品介绍</li>
+					<!--<li>规格参数</li>-->
+					<li>商品评价 (<font class="reviews-total">0</font>)</li>
+				</ul>
+			</div>
+			<div class="content"><p style="text-align: center;">${goods.description}</p></div>
+			<!-- 规格参数开始 -->
+			<!--<div class="content hide">-->
+				<!--<div class="speci">-->
+					<!--<table width="100%" border="0" cellpadding="0" cellspacing="0">-->
+						<!--<tr>-->
+							<!--<th>扩展卡类型</th>-->
+							<!--<td>支持MicroSD</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>重量</th>-->
+							<!--<td>146g</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>屏幕大小</th>-->
+							<!--<td>4.5英寸以下</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>运行内存</th>-->
+							<!--<td>1G</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>SIM卡类型</th>-->
+							<!--<td>Nano SIM</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>上市时间</th>-->
+							<!--<td>2016年10月</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>机身存储</th>-->
+							<!--<td>32GB / 64GB</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>耳机接口</th>-->
+							<!--<td>3.5mm</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>待机模式</th>-->
+							<!--<td>双卡双待单通</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>CPU型号描述</th>-->
+							<!--<td>高通骁龙625</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>闪光灯</th>-->
+							<!--<td>单LED补光灯</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>操作系统</th>-->
+							<!--<td>Android</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>屏幕尺寸</th>-->
+							<!--<td>5.0英寸</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>CPU核心数</th>-->
+							<!--<td>八核</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>副摄像头像素</th>-->
+							<!--<td>800万像素</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>型号</th>-->
+							<!--<td>CAZ-TL10</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>电池容量</th>-->
+							<!--<td>3020mAh</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>适用网络制式</th>-->
+							<!--<td>移动(TD-LTE), 联通(TD-LTE), 电信(FDD-LTE)</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>主摄像头像素</th>-->
+							<!--<td>1200万像素</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>产品尺寸</th>-->
+							<!--<td>141.2mm*69.1mm*7.1mm</td>-->
+						<!--</tr>-->
+						<!--<tr>-->
+							<!--<th>主屏分辨率</th>-->
+							<!--<td>1920*1080(FHD)</td>-->
+						<!--</tr>-->
+					<!--</table>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!-- 规格参数结束 -->
+			<!-- 商品评论开始 -->
+			<div class="content hide">
+				<div class="synrating cut">
+					<div class="rating fl cut"><font>0</font> 分</div>
+					<div class="satisficing cut">
+						<dl id="rating-satis"><dt>0</dt><dd>◆</dd></dl>
+						<ul>
+							<li class="col1">很不满意</li>
+							<li class="col2">不满意</li>
+							<li class="col3">一般</li>
+							<li class="col4">满意</li>
+							<li class="col5">非常满意</li>
+						</ul>
+						<p class="c888">该商品共累计评价 <strong class="reviews-total">0</strong> 条</p>
+					</div>
+				</div>
+				<div class="reviews module mt20 cut" id="reviews"></div>
+			</div>
+			<!-- 商品评论结束 -->
+		</div>
+		<!-- 详情结束 -->
+	</div>
+</div>
+<!-- 主体结束 -->
+<div class="cl"></div>
+<div class="tocart-dialog cut" id="tocart-dialog">
+	<p><i class="icon"></i><font class="ml10"></font></p>
+	<div class="mt20"><a class="sm-green" href="cart/index.html">结算付款</a><a class="sm-gray" onclick="cancelTocartDialog()">继续购物</a></div>
+	<a class="c999" onclick="cancelTocartDialog()">×</a>
+</div>
+<#include "footer"/>
